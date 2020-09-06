@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+const int Mxn =  5e8;
+int main()
+{
+  int n;
+  int q;
+  cin>>n>>q;
+  pair<int,int> a[50000];
+  int pos = 0;
+  for(int i=0;i<n;i++)
+  {
+      int beat;
+      cin>>beat;
+      a[i].first = pos;
+      a[i].second = pos+beat;
+      pos+=beat;
+  }
+  vector<int>questions;
+  for(int i=0;i<q;i++)
+  {
+      int pos;
+      cin>>pos;
+      questions.push_back(pos);
+  }
+  for(int i=0;i<questions.size();i++)
+  {
+      for(int j=n-1;j>=0;j--){
+        if(a[j].first<=questions[i]){
+            cout<<j+1<<endl;
+            break;
+        }
+  }
+  }
+}
