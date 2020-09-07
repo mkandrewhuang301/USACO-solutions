@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+const int Mxn =  5e8;
+int main()
+{
+  ifstream fin("bcount.in");
+  ofstream fout("bcount.out");
+  int n, q;
+  fin>>n>>q;
+  int hol[100002], gue[100002], jer[100002];
+  int currh  =0, currg = 0, currj = 0;
+  hol[0] = 0; gue[0] = 0; jer[0] = 0;
+  for(int i=1;i<=n;i++)
+  {
+      int x;
+      fin>>x;
+      if(x==1)  currh++;
+      if(x==2)  currg++;
+      if(x==3)  currj++;
+      hol[i] = currh;
+      gue[i] = currg;
+      jer[i] = currj;
+  }
+  hol[n+1]  =hol[n];gue[n+1] = gue[n]; jer[n+1] = jer[n];
+  for(int i=0;i<q;i++){
+    int start,finish;
+    fin>>start>>finish;
+    fout<<hol[finish] - hol[start-1]<< " ";
+    fout<<gue[finish] - gue[start-1]<< " ";
+    fout<<jer[finish] - jer[start-1]<<endl;
+  }
+}
