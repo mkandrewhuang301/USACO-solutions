@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+lli n, m,d,s;
+int main()
+{
+    ifstream fin("D://6.in");
+    ofstream fout("badmilk.out");
+    vector<vector<int>>drinks;
+    vector<vector<int>>infected;
+    int milk[51] = {0};
+    fin>>n>>m>>d>>s; ///n is upper for number of people, D is upper for number of milk ///d is number of drinks and S is number of infected
+    for(int i=0;i<d;i++)
+    {
+        int p,m,t;
+        fin>>p>>m>>t;
+        vector<int> temp;
+        temp.push_back(t);///0 is time
+        temp.push_back(p);///1 is person
+        temp.push_back(m);///2 is milk
+        drinks.push_back(temp);
+    }
+    for(int i=0;i<s;i++){
+        int p,t;
+        fin>>p>>t;
+        vector<int>temp;
+        temp.push_back(t);
+        temp.push_back(p);
+        infected.push_back(temp);
+    }
+    for(int i=0;i<infected.size();i++){
+        int upper_time = infected[i][0];
+        int person  =infected[i][1];
+        for(int j  =0;j<drinks.size();j++){
+            if(drinks[j][0]<upper_time && drinks[j][1]==person){
+                milk[drinks[j][2]]++;
+            }
+        }
+    }
+    int ans = 0;
+    ///calculate max number of infected
+    for(int i=1;i<51;i++){
+        if(milk[i]==s){
+            int infected_people[50] = {0};
+            for(int j=0;j<drinks.size();j++){
+                if(drinks[j][2]== i){
+                    infected_people[drinks[j][1]]=1;
+                }
+            }
+            int curr  =0;
+            for(int i=1;i<51;i++){
+                if(infected_people[i]==1) curr++;
+            }
+            ans = max(ans, curr);
+        }
+    }
+    cout<<ans<<endl;
+}
