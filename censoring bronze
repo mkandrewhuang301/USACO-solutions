@@ -1,0 +1,25 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+lli n, k, b;
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    ifstream fin("censor.in");
+    ofstream fout("censor.out");
+    fin.tie(NULL);
+    string x;
+    fin>>x;
+    string delim;
+    fin>>delim;
+    bool cont = true;
+    size_t found;
+    string ans  ="";
+    for(int i =0;i<x.size();i++){
+        ans+= x[i];
+        if(ans.size()> delim.size() && ans.substr(ans.length() - delim.length())==delim) ans.resize(ans.size() - delim.size());
+    }
+    fout<<ans<<endl;
+
+
+}
