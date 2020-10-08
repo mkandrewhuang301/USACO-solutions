@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+lli n, k, b;
+int main()
+{
+    ifstream fin("D://inp.txt");
+    cin>>n;
+    int int_total = (int) log10 (n);
+    string total;
+    stringstream ss;
+    ss<<n;
+    ss>>total;
+    vector<string> dict;
+    bool cont = true;
+    while(cont){
+        string x = "";
+        cin>>x;
+        if(x=="")
+            cont =false;
+        else{
+            if(x.length() == int_total+1) dict.push_back(x);
+        }
+    }
+    int ans = 0;
+    for(auto it: dict){
+        string temp = it;
+        for(int i=0;i<int_total+1;i++){
+            int map_val = temp[i]  - 65;
+            if(map_val >=17)map_val-- ;
+            //cout<<temp[i]<<" "<<2+ (int)map_val/3<<" "<<total[i] - 48<<endl;
+            if(2+ (int)map_val/3 != total[i] - 48) break;
+            if(i == int_total){
+                    cout<<temp<<endl;
+                    ans++;
+            }
+        }
+
+    }
+    if(ans==0)cout<<"NONE";
+
+}
