@@ -1,0 +1,5 @@
+When working with grids and going 8 directons, sometimes its best to create an aray of all the possible directions, then add them
+int x_move[8] = {1,0, 0, 1,-1 , -1,  1, -1};
+    int y_move[8] = {1,-1,1, 0, 0, -1, -1 ,1};
+    
+  Here, we have the respective x and Y directions for movemet, and then make a for loop that loops 4 times and add this value to i and j to get your direction
