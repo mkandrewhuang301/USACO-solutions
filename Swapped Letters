@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+///lli n, k, b;
+vector<string> largest;
+vector<string> smallest;
+vector<string> unorder_small;
+vector<string> unorder_large;
+bool meth(string l, string r){
+    return l>r;
+}
+int main()
+{
+    int n;
+    ifstream fin("scramble.in");
+    ofstream fout("scramble.out");
+   ios_base::sync_with_stdio(false);
+    fin.tie(NULL);
+    fin>>n;
+    for(int i=0;i<n;i++){
+        string x;
+        fin>>x;
+        multiset<char> small;
+        vector<char> large;
+        for(int j  =0;j<x.length();j++){
+            small.insert(x[j]);
+            large.push_back(x[j]);
+        }
+        string temp  ="";
+        for(auto it: small)temp+=it;
+        smallest.push_back(temp);unorder_small.push_back(temp);    ///sort both ascending, have one full dictionary list , one unordered
+        sort(large.begin(), large.end(), greater<char>());
+        temp = "";
+        for(auto it: large) temp+= it;
+        largest.push_back(temp); unorder_large.push_back(temp);     ///sort both descending, have one full dict list, one unordered
+    }
+    sort(largest.begin(), largest.end());
+    sort(smallest.begin(), smallest.end());
+
+    for(int i  =0;i<n;i++){
+         auto higher = upper_bound(smallest.begin(), smallest.end(), unorder_large[i]);
+         auto lower = lower_bound(largest.begin(), largest.end(), unorder_small[i]);
+         fout<<lower - largest.begin()+1<<" "<<higher - smallest.begin() <<endl;
+         ;
+    }
+}
