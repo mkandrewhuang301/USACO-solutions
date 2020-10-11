@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+lli n,c;
+vector<pair<int,int>> stop;
+bool cmp(pair<int,int> a, pair<int,int>b)
+{
+    return a.second<b.second;
+}
+int main()
+{
+    ifstream fin("helpcross.in");
+    ofstream fout("helpcross.out");
+    fin>>c>>n;
+    multiset<int> chick;
+    vector<pair<int,int>> cow;
+    for(int i=0;i<c;i++){
+        int x;
+        fin>>x;
+        chick.insert(x);
+    }
+    for(int i=0;i<n;i++){
+        int start,end;
+        fin>>start>>end;
+        cow.push_back(make_pair(start,end));
+    }
+    sort(cow.begin(), cow.end(), cmp);
+    int ans = 0;
+    for(int i=0;i<n;i++){
+        auto it  = chick.lower_bound(cow[i].first);
+        if(it!= chick.end() && *it <= cow[i].second){
+            ans++;
+            chick.erase(it);
+        }
+    }
+    fout<<ans<<endl;
+
+}
