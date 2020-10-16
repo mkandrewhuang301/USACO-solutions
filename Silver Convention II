@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+lli n,k;
+bool cmp(vector<lli> a, vector<lli>b)
+{
+    return a[1]<b[1];
+}
+int main()
+{
+    string word;
+    cin>>n;
+    vector<vector<lli>> cows;
+    for(int i=1;i<=n;i++){
+        int arrive, duration;
+        cin>>arrive>>duration;
+        vector<lli> curr;
+        curr.push_back(i);
+        curr.push_back(arrive);
+        curr.push_back(duration);
+        cows.push_back(curr);
+    }
+    sort(cows.begin(), cows.end(), cmp);
+    lli time = 0;
+    lli ans  =0;
+    set<vector<lli>> queque;
+    int i  =0;
+    //cout<<endl<<cows[n-1][1]<<endl;
+    while(i!=n){//time<cows[n-1][1] + ){
+        if(queque.size() ==0 && time< cows[i][1]){
+            time = cows[i][1];
+        }
+        while(i!=n &&cows[i][1]<=time ){   ///whatever we learned in cs, if first fail then exit prematurely
+            queque.insert(cows[i]);
+            i++;
+        }
+
+        if(queque.size() != 0){
+            auto it = queque.begin();
+            const vector<lli> & tempvec = (*it);    ///now we need to add to queque
+            //cout<<time<< " "<<tempvec[1]<<" "<<time - tempvec[1]<<endl;
+            ans = max(ans, time - tempvec[1]);
+            time+= tempvec[2];
+            queque.erase(queque.begin());
+        }
+    }
+    cout<<ans<<endl;
+
+}
