@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 100001
+int n, b;
+int main()
+{
+    ifstream fin("balancing.in");
+    ofstream fout("balancing.out");
+    fin>>n>>b;
+    set<pair<int,int>> x;
+    set<pair<int,int>>y;
+    set<int>newx; set<int>newy;
+    for(int i=0;i<n;i++){
+        int x_val, y_val;
+        fin>>x_val>>y_val;
+        x.insert(make_pair(x_val,y_val));   ///
+        y.insert(make_pair(y_val,x_val));    ///
+        newx.insert(x_val);
+        newy.insert(y_val);
+    }
+     ////////////////////////////not needed
+    int total  =0;
+    int a ;
+    for(auto it:x){
+        total+= it.first;
+        if(total > (int)n/2 ){
+                a = it.first + 1;
+                break;
+        }
+    }
+    total = 0;
+    for(auto it:y){
+        total+= it.first;
+        if(total > (int)n/2 ){
+                b = it.first + 1;
+                break;
+        }
+    }
+//////////////////////////not needed
+    int ans = n;
+    for(auto temp_a:newx){
+        for( auto temp_b: newy){
+            temp_a +=1; temp_b+=1;
+            int ul = 0, ur = 0, dl = 0, dr = 0;
+            for(auto it: x){
+                if(it.first <temp_a && it.second<temp_b) dl++;
+                if(it.first<temp_a && it.second>temp_b) ul++;
+                if(it.first>temp_a && it.second<temp_b)dr++;
+                if(it.first> temp_a && it.second > temp_b) ur++;
+
+            }
+            int compare_to = max(ul, max(ur, max(dr, dl)));
+                ans = min(ans, compare_to);
+        }
+    }
+    fout<<ans<<endl;
+
+
+}
