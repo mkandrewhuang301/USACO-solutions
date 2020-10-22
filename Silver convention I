@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 100001
+int n, m,c;
+vector<int> total;
+ifstream fin("convention.in");
+    ofstream fout("convention.out");
+bool check(int max_wait)
+{
+    ///most amount of cars  = m
+    int cars = 0;
+    //cout<<max_wait<<endl;
+    for(int i  =0;i<total.size();i++){
+        int first_time = total[i];
+        int capacity = 1;
+        while(i+1<total.size() && total[i+1]<first_time+max_wait && capacity<c){
+            //cout<<capacity<<"  "<<total[i]<<" " <<first_time+max_wait<<endl;;
+            i++;
+            capacity++;
+        }
+        cars++;
+    }
+    return(cars<=m);
+}
+void bin_search()
+{
+    int ans = 0;
+    for(int i = 100000;i >=1;i/=2){  ///Find last occurence of false
+        while(!check(ans+i)) ans+=i;          ///
+    }
+    fout<<ans;
+}
+int main()
+{
+    fin>>n>>m>>c;
+    for(int i=0;i<n;i++){
+        int arrive;
+        fin>>arrive;
+        total.push_back(arrive);
+    }
+    sort(total.begin() ,total.end());
+    bin_search();
+}
