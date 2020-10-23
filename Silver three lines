@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 100001
+lli n, g;
+map<lli, lli> x; ///xval, occurences
+map<lli,lli>y;
+void twoy_onex  (vector<pair<lli,lli> >coord)
+{
+
+    lli best_x = -1;
+    lli val = -1;
+    for(auto it: x){
+        if(it.second> val){
+            best_x = it.first;
+            val = it.second;
+        }
+    }
+    for(int i = 0;i<coord.size();i++){
+        if(coord[i].first = best_x) coord.erase(coord.begin()+ i);
+        //i-=2;
+    }
+    set<lli> remain_y;
+    for(auto it:coord){
+        remain_y.insert(it.second);
+    }
+    if(remain_y.size()==2) {cout<<1<<endl; exit(0);}
+}
+void twox_oney(vector<pair<lli,lli> >coord)
+{
+    lli best_y = -1;
+    lli val = 0;
+    for(auto it:y){
+        if(it.second>val){
+            best_y = it.first;
+            val = it.second;
+        }
+    }
+    for(int i=0;i<coord.size();i++){
+        if(coord[i].second  = best_y)coord.erase(coord.begin() + i);
+        //i-=2;
+    }
+    set<lli>remain_x;
+    for(auto it:coord){
+        remain_x.insert(it.first);
+    }
+    if(remain_x.size() ==2) {cout<<1<<endl; exit(0);}
+}
+int main()
+{
+    cin>>n;
+    vector<pair<lli,lli>>coord;
+    for(int i=0;i<n;i++){
+        lli x_coor,y_coor;
+        cin>>x_coor>>y_coor;
+        auto itr = x.find(x_coor);
+        if(itr== x.end())x.insert(pair<lli,lli>(x_coor,1));
+        else itr->second +=1;
+        auto itr_y = y.find(y_coor);
+        if(itr_y ==y.end())y.insert(pair<lli,lli>(y_coor,1));
+        else itr_y->second +=1;
+        coord.push_back(make_pair(x_coor, y_coor));
+    }
+
+    if(x.size()==3){
+        cout<<1<<endl;
+        return 0;
+    }
+    if(y.size()==3){
+        cout<<1<<endl;
+        return 0;
+    }
+    twoy_onex(coord);
+    twox_oney(coord);
+    cout<<0<<endl;
+    return 0;
+    ///begin
+
+
+}
