@@ -1,0 +1,81 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 100001
+lli n, g;
+int main()
+{
+    cin>>n;
+    vector<vector<int>> times;    ///time, value, ID
+    for(int i=0;i<n;i++){   ///index at 0
+        int start,end;
+        cin>>start>>end;
+        vector<int> shift;
+        shift.push_back(start);
+        shift.push_back(1);
+        shift.push_back(i);
+        times.push_back(shift);
+        shift.clear();
+        shift.push_back(end);
+        shift.push_back(-1);
+        shift.push_back(i);
+        times.push_back(shift);
+    }
+    sort(times.begin() ,times.end());
+    //for(auto it: times){
+      //  cout<<it[0]<<"  "<<it[1]<< " "<<it[2]<<endl;
+    //}
+    //cout<<endl;
+    int total_lifeguards = 0;
+    int lifeguard_id;
+    int alone_starttime;
+    set<int> active_lifeguards;
+    int time_alone[100000] = {0};         ///dont forget indexed at 1
+    for(int i  =0;i<times.size();i++){                                                    ///2N   200000
+        if(total_lifeguards==1){
+           time_alone[lifeguard_id] += times[i][0] - alone_starttime;
+        }
+        total_lifeguards+= times[i][1];
+        if(times[i][1]>0)active_lifeguards.insert(times[i][2]);
+        if(times[i][1]<0) {
+            auto pos = active_lifeguards.find(times[i][2]);
+            active_lifeguards.erase(pos);
+            ///for(int j  =0;j<active_lifeguards.size();j++){                             ///100000
+               /// if(active_lifeguards[j]== times[i][2]) active_lifeguards.erase( active_lifeguards.begin()+j);
+            ///}
+        }
+        if(total_lifeguards==1){
+            auto pointer = active_lifeguards.begin();
+            lifeguard_id = *pointer;
+            alone_starttime = times[i][0];
+        }
+
+    }
+    lli smallest = 1000000000;
+    int smallest_id;
+    for(int i = 0;i<n;i++){
+        if(time_alone[i] < smallest){
+            smallest = time_alone[i];
+            smallest_id = i;
+        }
+    }
+    //cout<<"SMALLESTID " <<smallest_id<<endl;
+    for(int i=0;i<n*2;i++){
+        //cout<<times[i][2]<<endl;
+        if(times[i][2]==smallest_id) times[i][1] = 0;
+    }
+    int ans = 0;
+    int total_active = 0;
+    int start;
+    for(auto it:times){
+            // cout<<it[0]<<"  "<<it[1]<< " "<<it[2]<<endl;
+        if(total_active  ==0){
+            start = it[0];
+        }
+        total_active+= it[1];
+        if(total_active==0){
+            ans+= it[0] - start;
+        }
+    }
+    cout<<ans<<endl;
+}
