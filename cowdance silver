@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 100001
+lli n, tmax;
+bool check(int k,vector<int> duration)
+{
+    set<lli> on_stage;
+    lli last = 0;
+    for(auto it: duration){
+        if(on_stage.size()==k){
+            last = *on_stage.begin();
+            on_stage.erase(on_stage.begin());
+        }
+        if(last  + it >tmax) return false;
+        on_stage.insert(last+ it);
+
+    }
+    return true;
+
+}
+int main()
+{
+    ifstream fin("cowdance.in");
+    ofstream fout("cowdance.out");
+    fin>>n>>tmax;
+    vector<int> duration;
+    for(int i=0;i<n;i++){
+        int dur;
+        fin>>dur;
+        duration.push_back(dur);
+    }
+    int k = 0;
+    for(int i = n;i>=1;i/=2){
+        while(!check(k+i, duration)) k+=i;
+    }
+    fout<<k+1<<endl;
+
+}
