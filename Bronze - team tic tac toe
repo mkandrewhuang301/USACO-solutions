@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n ,x;
+///array<lli,2> a[MAXN];
+char a[3][3];
+bool works(int start_i, int start_j, int delta_x, int delta_y, char first, char second)
+{
+    bool one = false;
+    bool two  =false;
+    for(int i  =0;i<3;i++){
+        char spot = a[ start_i + i*delta_y][start_j + i*delta_x];
+        if(spot!= first && spot!= second ) return false;
+        if(spot==first) one = true;
+        if(spot== second) two = true;
+    }
+    if(one&& two )return true;
+    return false;
+}
+int main()
+{
+    ifstream fin("tttt.in");
+    ofstream fout("tttt.out");
+    for(int i  =0;i<3;i++){
+        string x;
+        fin>>x;
+        for(int j  = 0;j<3;j++){
+            a[i][j] = x[j];
+        }
+    }
+    int total = 0;
+    for(char cow = 'A'; cow<='Z';cow++){
+
+        for(int i  =0;i<3;i++){
+            for(int j  =0;j<3;j++){
+                if(j==0 && works(i,j,1, 0, cow, cow)){total++;goto next;}
+                else if(i==0 && works(i,j,0, 1, cow, cow)){total++;goto next;}
+                else if(i==0 && j ==0 && works(i,j,1,1, cow, cow)) {total++;goto next;}
+                else if(i == 2 && j ==0 && works(i,j,1, -1, cow, cow)){total++;goto next;}
+            }
+        }
+        next:;
+    }
+    fout<<total<<endl;
+    total = 0;
+    for(char cow1 = 'A'; cow1<='Z';cow1++){
+        for(char cow = cow1; cow<='Z';cow++){
+            if(cow1==cow)continue;
+            for(int i  =0;i<3;i++){
+                for(int j  =0;j<3;j++){
+                    if(j==0 && works(i,j,1, 0, cow, cow1)){total++;goto next2;}
+                    else if(i==0 && works(i,j,0, 1, cow, cow1)){total++;goto next2;}
+                    else if(i==0 && j ==0 && works(i,j,1,1, cow, cow1)) {total++;goto next2;}
+                    else if(i == 2 && j ==0 && works(i,j,1, -1, cow, cow1)){total++;goto next2;}
+                }
+            }
+            next2:;
+        }
+    }
+    fout<<total<<endl;
+
+
+}
