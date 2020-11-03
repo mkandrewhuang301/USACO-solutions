@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n ,x;
+///array<lli,2> a[MAXN];
+int a[2001][2001] ;
+int main()
+{
+    ifstream fin ("mowing.in");
+    ofstream fout ("mowing.out");
+    fin>>n;
+    int time = 1;
+    multiset<int> xval;
+    int i, j;
+    i = j = 1000;
+    a[i][j] = 1;
+    for(int t  =0;t<n;t++){
+        char dir; int move;
+        fin>>dir>>move;
+        int pn;
+        if(dir == 'E' || dir=='W' ){
+            if(dir=='E') pn = 1;
+            else pn = -1;
+            for(int z  =0;z<move;z++){
+                time++;
+                j+=1 *pn;
+                if(a[i][j] != 0) xval.insert(time - a[i][j]);
+                a[i][j] = time;
+            }
+        }
+        else if(dir == 'S' || dir=='N'){
+            if(dir=='N') pn  =1;
+            else pn  =-1;
+            for(int z = 0;z<move;z++){
+                time++;
+                i+= 1*pn;
+                if(a[i][j] != 0) xval.insert(time - a[i][j]);
+                a[i][j] = time;
+            }
+        }
+    }
+    if(xval.size()==0){
+        fout<<-1;
+        return 0;
+    }
+    fout<<*xval.begin()<<endl; ///Always need pointer for sets
+    return 0;
+
+
+
+}
