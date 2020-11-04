@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n ,x;
+///array<lli,2> a[MAXN];
+vector<pair<int,bool>> bales;
+int blast(int i, vector<pair<int, bool>>bales, int radius)
+{
+    int ans = 1;
+    int pos = i -1;
+    int blown_up = bales[i].first;
+    bales[i].second = true;
+    vector<int> result;
+    while(pos !=-1 && abs(bales[pos].first - blown_up)<=radius && bales[pos].second != true){
+        result.push_back(pos);
+        bales[pos].second = true;
+        ///ans+= blast(pos, bales, radius+1);
+        pos--;
+    }
+    pos = i+1;
+    while(pos !=n && abs(bales[pos].first - blown_up)<=radius && bales[pos].second != true){
+        //cout<<"b ";
+        ///cout<<bales[pos]<< " "<<blown_up<< " "<<bales[pos] - blown_up<<endl;
+        ///ans+=blast(pos, bales, radius+1);
+        result.push_back(pos);
+        bales[pos].second = true;
+        pos++;
+    }
+    for(int i  =0;i<result.size();i++){
+        ans+=blast(result[i], bales, radius+1);
+    }
+    return ans;
+}
+int main()
+{
+    ifstream fin("angry.in");
+    ofstream fout("angry.out");
+    fin>>n;
+    for(int i=0;i<n;i++){
+        int x;
+        fin>>x;
+        bales.push_back(make_pair(x, false));
+    }
+    sort(bales.begin(), bales.end());
+    int ans = 0;
+    for(int i  =0;i<n;i++){
+        //cout<<bales[i]<<"  "<< blast(i, bales, 1)<<endl;
+        ans = max(ans, blast(i, bales, 1));
+    }
+    fout<<ans<<endl;
+}
