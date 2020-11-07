@@ -1,0 +1,22 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+int n,k;
+int a[80000];
+multiset<int> height;
+    lli ans = 0;
+int main()
+{
+    cin>>n;
+    for(int i  =0;i<n;i++){
+        cin>>a[i];
+        if(i>0){
+        auto it =height.upper_bound(a[i]);
+        height.erase(height.begin(), it);
+        ans+= height.size();
+        }
+        height.insert(a[i]);
+    }
+    cout<<ans<<endl;
+
+}
