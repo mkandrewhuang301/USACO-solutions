@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli w,h;
+int total = 0;
+struct rectangle
+{
+    int ux;
+    int uy;
+    int ly;
+    int lx;
+};
+rectangle lawnmower;
+rectangle feed;
+int calc( int pointx, int pointy){
+    ;
+    ///if lower side is lower and higher side is higer return 1;
+    if(feed.lx <= pointx && feed.ly<= pointy && feed.ux  >= pointx && feed.uy >= pointy) return 1;
+    return 0;
+    ///else return 0;
+}
+int main()
+{
+    ifstream fin("billboard.in");
+    ofstream fout("billboard.out");
+    fin>>lawnmower.lx>>lawnmower.ly>>lawnmower.ux>>lawnmower.uy;
+    fin>>feed.lx>>feed.ly>>feed.ux>>feed.uy;
+    total+= calc(lawnmower.lx,lawnmower.ly);
+    total+= calc(lawnmower.lx, lawnmower. uy);
+    total+= calc(lawnmower.ux, lawnmower.ly);
+    total+= calc(lawnmower. ux, lawnmower.uy);
+    if(total  ==4){
+        fout<<0<<endl;
+        return 0;
+    }
+    if(total <= 1){
+        fout<<(lawnmower.ux - lawnmower.lx) * (lawnmower.uy - lawnmower.ly);
+        return 0;
+    }
+    if (total ==2){
+        if((feed.ux <= lawnmower.ux && feed.ux >= lawnmower.lx)){
+                fout<<(lawnmower.uy - lawnmower.ly)* (lawnmower.ux - feed.ux);
+                return 0;
+        }
+        if(feed.lx <= lawnmower.ux && feed.lx >= lawnmower.lx){
+            fout<<(lawnmower.uy - lawnmower.ly)* (feed.lx - lawnmower.lx);
+            return 0;
+        }
+        if((feed.uy <= lawnmower.uy && feed.uy >= lawnmower.ly)){
+                fout<<(lawnmower.ux - lawnmower.lx)* (lawnmower.uy - feed.uy);
+                return 0;
+        }
+        if(feed.ly <= lawnmower.uy && feed.ly >= lawnmower.ly){
+            fout<<(lawnmower.ux - lawnmower.lx)* (feed.ly - lawnmower.ly);
+            return 0;
+        }
+    }
+}
