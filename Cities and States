@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n;
+multimap<string, string> cities;
+multimap<string, string> states;
+void add(multimap<string,string>& stored, string first, string  second, string city)
+{
+    string condensed = first.substr(0,2) + second.substr(0,2);
+    stored.insert(pair<string,string>(condensed, city));
+}
+int main()
+{
+    ifstream fin("citystate.in");
+    ofstream fout("citystate.out");
+    fin>>n;
+    for(int i  =0;i<n;i++){
+        string city, state;
+        fin>>city>>state;
+        add(cities, city, state, city);
+        add(states, state, city, city);
+    }
+    int ans = 0;
+    for(auto it: cities){
+
+        //auto found = states.find(it.first);
+        typedef multimap<string, string>::iterator itr;
+        pair<itr, itr> result = states.equal_range(it.first);
+        for(itr curr = result.first; curr != result.second; curr++){
+            //cout<<it.first<<"  "<<curr->second<<" " <<it.second<<endl;
+            if(curr->second != it.second && (curr->first.substr(0,2) != curr->first.substr(2, 2))) ans++;    ///The second precondition is to make sure they are from different states
+        }
+    }
+    fout<<ans/2<<endl;
+
+
+}
