@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n;
+bool cmp(pair<int, int> a, pair<int, int>b){
+    return a.first>b.first;
+}
+int main()
+{
+    //ifstream fin("D://3.in");
+    ifstream fin("socdist1.in");
+    ofstream fout("socdist1.out");
+    fin>>n;
+    string x;
+    fin>>x;
+    bool edge = true;
+    int curr = 0;
+    vector<pair<int, int>> onecow; ///Length, and if edge or not
+    vector<pair<int, int>> twocow;
+    multiset<pair<int, int>> gaps;
+    bool at_least_one = false;
+    for(int i = 0;i<n;i++){
+        int val = x[i] - 48; ///Get each position number value
+        if(val==0) curr++;   ///Iterate the value every time
+        if(val==1)at_least_one = true;
+        if(i == n-1)edge = true;  ///if on very last value, it is an edge
+        if(val == 1|| i== n-1){   ///If it reaches a 1 or at the end
+            if(edge == true && curr!= 0 ){
+                onecow.push_back(make_pair(curr-1, -i)); ///Finding if cow divide   When on edge, it is just the gap  -1;
+                twocow.push_back(make_pair((curr-2)/2, -i) );     ///When at edge, it is just -2 divided by 2
+                gaps.insert(make_pair(curr, -i));
+            }
+            else if (curr!= 0) { ///Not at edge
+                    onecow.push_back(make_pair((curr-1)/2, -i));   ///At middle and divide
+                    twocow.push_back(make_pair((curr-2)/3, -i));    ///2 missing and divide by 3
+                    gaps.insert(make_pair(curr, -i));
+            }
+
+            cout<<curr<<"  "<<edge<<endl;
+            edge = false;
+            curr = 0;
+        }
+    }
+    sort(onecow.begin() ,onecow.end(),cmp);      ///sort descending
+    sort(twocow.begin() ,twocow.end(),cmp);
+    if(!at_least_one){fout<<(n-1)<<endl;return 0;};
+    pair<int, int> largest = *twocow.begin();     ///Get largest double gap val
+
+    bool two = true;
+    if(onecow[0].first> largest.first && onecow[1].first>largest.first ) two  =false;
+    if(two == true ){ ///we are going to use the largest gap and put two cows in it
+        for(auto it:gaps){
+            if(it.second = largest.second){
+                gaps.erase(it);
+                gaps.insert(make_pair(largest.first, abs(largest.second)));///
+                ///gaps.insert(largest);
+                break;
+            }
+        }
+        auto need  = gaps.begin();
+        if(need->second<=0)need++;
+        fout<<1  + need->first<<endl;
+        return 0; ///Works
+    }
+    else{
+        for(int time  =0;time<2;time++){
+            for (auto it: gaps){
+                if(it.second == onecow[time].second ) {
+                    gaps.erase(it);
+                    gaps.insert(make_pair(onecow[time].first, abs(onecow[time].second)));
+                    //gaps.insert(onecow[time]);
+                    continue;
+                }
+            }
+        }
+        auto need  = gaps.begin();
+        if(need->second<=0)need++;
+        fout<<1  + need->first<<endl;
+        //cout<<"ADFDFSADF"<<endl;
+        return 0;
+    }
+
+
+
+
+}
