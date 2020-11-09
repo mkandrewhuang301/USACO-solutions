@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n;
+bool cmp(pair<int, int> a, pair<int, int>b){
+    return a.first>b.first;
+}
+int main()
+{
+    //ifstream fin("D://8.in");
+    ifstream fin("socdist2.in");
+    ofstream fout("socdist2.out");
+    fin>>n;
+    vector<pair<int, int>> infected;
+    for(int i=0;i<n;i++){
+        int pos, has;
+        fin>>pos>>has;
+        //cout<<pos<<"  "<<has<<endl;
+        infected.push_back(make_pair(pos, has));
+    }
+    sort(infected.begin(), infected.end());
+    //cout<<endl;
+    int lower = 10000000;
+    for(int i  =0;i<n;i++){
+        if(infected[i].second == 0){
+            if(i!=0 && infected[i-1].second==1) lower = min(lower, infected[i].first - infected[i-1].first);
+            if(i!= n-1 && infected[i+1].second ==1) lower = min(lower, infected[i+1].first  -infected[i].first);   ///Gets the smallest range for which infected infected cannot travel
+        }                                                                                                         ///thus the real radius is r -1;
+    }
+    int ans = 0;
+    for(int i  =0; i<n;i++){
+        if(infected[i].second ==1 ){
+            infected[i].second = 0;
+            ans++;
+            //cout<<infected[i].first<<" ANSWER "<<ans<<endl;
+            if(i == n-1) break;
+            int leading = i+1;
+            int lagging = i;
+            while(leading!= n){
+                if(infected[leading].second==1){
+                    if(infected[leading].first - infected[lagging].first < lower){
+                        infected[leading].second = 0;
+                        lagging = leading;
+                    }
+                    else if(infected[leading].first - infected[lagging].first >= lower || infected[leading].second == 0){
+                        break;
+                    }
+                }
+                leading++;
+            }
+        }
+    }
+    //for(auto it: infected) cout<<it.first<<"  "<<it.second<<endl;
+    fout<<ans<<endl;
+}
