@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n, k;
+int cows[100]  ={-1};
+int main()
+{
+    ifstream fin("circlecross.in");
+    ofstream fout("circlecross.out");
+    string x;
+    fin>>x;
+    int ans  =0;
+    for(char i  ='A'; i<='Z' ;i++){
+        //for(int j = i+1; j<= 'Z'; j++){
+            bool left = false;
+            bool right =false;
+            int letter[27] = {0};
+            for(int pos = 0;pos<52;pos++){
+                if(x[pos] == i&& !left){
+                        left = true;
+                }
+                else if(x[pos]==i && !right){
+                    right = true;
+                }
+                if(x[pos]!= i && left && !right){
+                    letter[x[pos] - 65]++;
+                }
+            }
+            for(int c = 0;c<27;c++){
+                ans+= letter[c]%2;
+            }
+        //}
+    }
+    fout<<ans/2<<endl;
+
+}
