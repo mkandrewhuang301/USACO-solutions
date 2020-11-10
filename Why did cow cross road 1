@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n, k;
+int cows[100]  ={-1};
+int main()
+{
+    ifstream fin("crossroad.in");
+    ofstream fout("crossroad.out");
+    fin>>n;
+    memset(cows, -1, sizeof cows);
+    int ans  =0;
+    for(int i=0;i<n;i++){
+        int num ,side;
+        fin>>num>>side;
+        //cout<<cows[num]<< "  "<<side<<endl;
+        if(cows[num] == -1){
+            cows[num] = side;  ///be wary of == sign
+        }
+        else if(cows[num] != side){
+            ans++;
+            cows[num] = side;
+        }
+    }
+    fout<<ans<<endl;
+
+}
