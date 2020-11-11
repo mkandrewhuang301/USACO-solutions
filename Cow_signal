@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n,m, k;
+set<int> start;
+int a[10][10];
+    ifstream fin("cowsignal.in");
+    ofstream fout("cowsignal.out");
+void print(string x)
+{
+    string line = "";
+    for(int i = 0;i<x.length();i++){
+        for(int j  =0;j<k;j++){
+            line+=x[i];
+        }
+    }
+    for(int i  =0;i<k;i++){ /// number of lines
+        fout<<line<<endl;
+    }
+}
+int main()
+{
+    fin>>n>>m>>k;
+    for(int i  =0;i<n;i++){
+        string x;
+        fin>>x;
+        print(x);
+    }
+
+}
