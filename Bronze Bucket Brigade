@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n;
+ifstream fin("buckets.in");
+ofstream fout("buckets.out");
+char a[10][10];
+struct points{
+    int x;
+    int y;
+};
+int main()
+{
+    points barn;
+    points rock;
+    points lake;
+    for(int i = 0;i<10;i++){
+            string x;
+            fin>>x;
+            cout<<x<<endl;
+        for(int j  =0;j<10;j++){
+            a[i][j] = x[j];
+            if(x[j] =='B'){
+                barn.y =i; barn.x = j;
+            }
+            if(x[j] == 'L'){
+                lake.y = i;
+                lake.x = j;
+            }
+            if(x[j] == 'R'){
+                rock.y = i; rock.x = j;
+            }
+
+        }
+    }
+    if((barn.x == lake.x  && lake.x == rock.x) && ((lake.y< rock.y && rock.y < barn.y)  || (barn.y<rock.y && rock.y< lake.y ))){  /// check must be between the twoi coordinates
+         fout<<abs(barn.x - lake.x)  +abs(barn.y - lake.y) +1;
+         return 0;
+    }
+     if((barn.y== lake.y && lake.y == rock.y) && ((lake.x< rock.x && rock.x < barn.x)  || (barn.x<rock.x && rock.x< lake.x ))){ /// check must be between the twoi coordinates
+         fout<<abs(barn.x - lake.x)  +abs(barn.y - lake.y) +1;
+         return 0;
+    }
+    else{
+        fout<<abs(barn.x - lake.x)  +abs(barn.y - lake.y) - 1;
+        //cout<<123131<<endl;
+    }
+}
