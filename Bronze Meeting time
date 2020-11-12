@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n,m, k;
+struct stuff{
+    int patch;
+    int bes;
+    int els;
+};
+vector<stuff>  grass[17];///adjacency list
+set<int>ebest;
+set<int> bbest;
+void dfs(int node, int which, int sum){
+    if(node == n){
+        if(which == 0) bbest.insert(sum);
+        else if(which==1) ebest.insert(sum);
+    }
+    for(stuff next: grass[node]){
+            if(which == 0)dfs(next.patch, which, sum+next.bes);
+            else if(which == 1) dfs(next.patch, which, sum+next.els);
+    }
+}
+int main()
+{
+    ifstream fin("meeting.in");
+    ofstream fout("meeting.out");
+    fin>>n>>m;  ///N patches, m paths
+    for(int i=1;i<=m;i++){
+        int a,b, bessie, elsie;
+        fin>>a>>b>>bessie>>elsie;
+        stuff temp;
+        temp.patch = b;
+        temp.bes = bessie;
+        temp.els = elsie;
+        grass[a].push_back(temp);
+    }
+    dfs(1, 0, 0); ///0 = bessie
+    dfs(1, 1, 0); /// 1 = elsie
+    for(auto it: bbest){
+        //cout<<it<<endl;
+        auto found = ebest.find(it);
+        if(found!= ebest.end()){
+            fout<<it<<endl;
+            return 0;
+        }
+    }
+    fout<<"IMPOSSIBLE"<<endl;
+
+}
