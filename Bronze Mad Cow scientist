@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n;
+ifstream fin("breedflip.in");
+ofstream fout("breedflip.out");
+int main()
+{
+    fin>>n;
+    string want, got;
+    fin>>want>>got;
+    int ans =0;
+    while(want!= got){
+        int lower = 10000, upper = 0;
+        for(int i  =0;i<n;i++){
+            if(want[i]!= got[i]){
+                lower = min(lower, i);
+                upper = max(upper, i);
+            }
+        }
+        for(int j  = lower;j<=upper; j++){
+                if(want[j] == 'H') want[j] = 'G';
+                else want[j] = 'H';
+            }
+        ans++;
+    }
+    fout<<ans<<endl;
+
+}
