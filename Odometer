@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli l,n,f,b;
+ifstream fin("buckets.in");
+ofstream fout("buckets.out");
+lli lower, upper;
+set<lli> good;
+void test(string now, int curr_length, int max_length, int firstl, int firstr, char left, char right)
+{
+    if(firstl >1 && firstr > 1) return ;
+    if(curr_length == max_length){
+        lli result;
+        stringstream ss(now);
+        ss>>result;
+        while(now[0]=='0') now = now.substr(1);
+        if(result >= lower && result<= upper && good.find(result) == good.end() && (firstl== 1 || firstr==1) && (now.find(left)!=string::npos && now.find(right)!=string::npos)) {
+                good.insert(result);
+                //cout<<result<<endl;
+                //cout<<result<<endl;
+        }
+
+        return;
+    }
+    test(now+left, curr_length+1, max_length, firstl+1, firstr, left, right);
+    test (now+right, curr_length+1, max_length, firstl, firstr+1, left, right);
+}
+int main()
+{
+   string start,end;
+   cin>>start>>end;
+   stringstream ss(start);
+   ss>>lower;
+   stringstream tt(end);
+   tt>>upper;
+   for(char left  ='0' ;left<= '9'; left++){
+     for(char right  ='0'; right<='9';right++){
+        if(left==right)continue;
+        ///Now we have gotten the two pairs
+        ///We need to find the ways to add them
+        for(int length = start.length();length<=end.length(); length++){
+            ///We have all the possible lengths
+            test("", 0, length, 0, 0, left, right); ///recursioni to find all lengths
+        }
+     }
+   }
+   cout<<good.size()<<endl;
+}
