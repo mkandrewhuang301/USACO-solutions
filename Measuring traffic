@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n;
+ifstream fin("buckets.in");
+ofstream fout("buckets.out");
+struct stuff{
+    string which;
+    int lower;
+    int upper;
+};
+int lower = 0;
+int upper = 1000000;
+vector<stuff> road;
+void calc(int i)
+{
+    if(road[i].which == "none"){
+            //cout<<"Aa"<<endl;
+            lower = max(lower, road[i].lower);
+            upper = min(upper, road[i].upper);
+        }
+        else if(road[i].which == "on"){
+            lower-= road[i].upper;
+            upper-=road[i].lower;
+        }
+        else{  ///before cars go off
+            lower+= road[i].lower;
+            upper+=road[i].upper;
+        }
+        lower = max(lower, 0);
+}
+void calc2(int i)
+{
+    if(road[i].which == "none"){
+            //cout<<"Aa"<<endl;
+            lower = max(lower, road[i].lower);
+            upper = min(upper, road[i].upper);
+        }
+        else if(road[i].which == "on"){
+            lower+= road[i].lower;
+            upper+=road[i].upper;
+        }
+        else{  ///off
+            lower-= road[i].upper;
+            upper-=road[i].lower;
+        }
+        lower = max(0, lower);
+}
+int main()
+{
+    ifstream fin("traffic.in");
+    ofstream fout("traffic.out");
+    fin>>n;
+    for(int i  =0;i<n;i++){
+        string which;
+        int lower, upper;
+        fin>>which>>lower>>upper;
+        stuff temp;
+        temp.which = which; temp.lower = lower; temp.upper = upper;
+        road.push_back(temp);
+    }
+    for(int i = road.size() - 1; i>=0;i--){
+        calc(i);
+    }
+    fout<<lower<< " "<<upper<<endl;
+    lower = 0;
+    upper = 1000000;
+    for(int i  =0;i<road.size();i++){
+        calc2(i);
+    }
+    fout<<lower<<" " <<upper<<endl;
+}
