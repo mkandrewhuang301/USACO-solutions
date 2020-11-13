@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli l,n,f,b;
+ifstream fin("buckets.in");
+ofstream fout("buckets.out");
+
+int main()
+{
+    cin>>l>>n>>f>>b;
+    set<pair<lli,lli>> stop;
+    for(lli i = 0;i<n;i++){
+        lli pos, val;
+        cin>>pos>>val;
+        stop.insert(make_pair(val,pos));
+    }
+    lli curr = 0;
+    lli difference = f- b;
+    lli ans = 0;
+    set<pair<lli,lli>>:: reverse_iterator it;
+    for(it = stop.rbegin(); it!= stop.rend(); it++){
+        if(it->second> curr && it->second<= l){
+            ans+= it->first * (it->second - curr) * difference;
+            curr = it->second;
+        }
+    }
+    cout<<ans<<endl;
+}
