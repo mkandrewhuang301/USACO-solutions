@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n,m;
+set<char> spot[101];
+set<char> plain[101];
+int main()
+{
+    ifstream fin("cownomics.in");
+    ofstream fout("cownomics.out");
+    fin>>n>>m;
+    for(int i=0;i<n;i++){
+        string gene;
+        fin>>gene;
+        for(int j  =0;j<m;j++){
+            spot[j].insert(gene[j]);
+        }
+    }
+
+    for(int i = 0;i<n;i++){
+        string gene;
+        fin>>gene;
+        for(int j  =0;j<m;j++){
+            plain[j].insert(gene[j]);
+        }
+    }
+
+    int ans = 0;
+    for(int i  =0; i<m;i++){
+        bool unique = true;
+        for(auto it: spot[i]){
+            auto found = plain[i].find(it);
+            if(found!= plain[i].end()) unique = false;
+        }
+        if(unique)ans++;
+    }
+    fout<<ans<<endl;
+
+}
