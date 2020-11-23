@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n,m;
+int a[101]  ={0};
+int main()
+{
+    freopen("factory.in", "r", stdin);
+    freopen("factory.out", "w", stdout);
+    cin>>n;
+    for(int i  =0;i<n-1;i++){
+        int x;
+        cin>>x;
+        int irre;
+        cin>>irre;
+        a[x]++;
+    }
+    int total_root = 0;
+    int location  =0;
+    for(int i  =1;i<=n;i++){
+        if(a[i] == 0) {
+            total_root++;
+            location = i;
+        }
+    }
+    if(total_root == 1){
+        cout<<location;
+        return 0;
+    }
+    cout<<-1<<endl;
+
+}
