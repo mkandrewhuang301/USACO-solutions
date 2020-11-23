@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+lli n,m;
+vector<int> cows;
+int main()
+{
+    freopen("haybales.in", "r", stdin);
+    freopen("haybales.out", "w", stdout);
+    cin>>n>>m;
+    for(int i  =0;i<n;i++){
+        int x;
+        cin>>x;
+        cows.push_back(x);
+    }
+    sort(cows.begin() ,cows.end());
+    for(int i  =0;i<m;i++){
+        int lower, upper;
+        cin>>lower>>upper;
+        auto up = upper_bound(cows.begin(), cows.end(), upper);
+        int up_pos = up - cows.begin();
+        auto down  = lower_bound(cows.begin(), cows.end(), lower);
+        int down_pos =down - cows.begin();
+        cout<<up_pos - down_pos<<endl;
+    }
+    return 0;
+
+}
