@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+#define faster ios_base::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+#define mod 1000000007
+#define vi vector<int>
+#define vpi vector<pair<int,int>>
+#define pb push_back
+#define mp make_pair
+lli n, l;
+struct stuff{
+    int weight;
+    int position;
+    int velocity;
+};
+bool cmp  (stuff a, stuff b)
+{
+    return a.position<b.position;
+}
+int main()
+{
+    freopen("meetings.in", "r", stdin);
+    freopen("meetings.out","w", stdout);
+    cin>>n>>l;
+    vector<stuff> cows;
+    multiset<int> left;
+    multiset<int> right;
+    vpi stop; /// time, weight;
+    int total_weight = 0;
+    for(int i = 0; i<n;i++)
+    {
+        int w, x, v;
+        cin>>w>>x>>v;
+        stuff temp;
+        total_weight += w;
+        temp.weight = w; temp.position = x; temp.velocity = v;
+        cows.pb(temp);
+        if(v == -1){
+            left.insert(x);
+        }
+        else{
+            right.insert(l -x);
+        }
+    }
+    sort(cows.begin(), cows.end(), cmp);
+    int pos = 0;
+    for(auto it : left){
+        stop.push_back({it,cows[pos].weight });
+        pos++;
+    }
+    int old = pos;
+    for(auto it: right){
+        stop.push_back({it, cows[n-1-pos+old].weight});
+        //cout<<cows[n-1-pos+old].weight<<endl;
+        pos++;
+    }
+    sort(stop.begin(), stop.end());
+    int weight  =0;
+    pos = 0;
+    while(2*weight< total_weight){
+        weight+= stop[pos].second; 
+        if(2*weight< total_weight)pos++;
+    }
+    int time = stop[pos].first;
+    int ans = 0;
+    queue<int> possible;
+    for(int i  =0;i<n;i++){
+        if(cows[i].velocity == -1) {
+            while(possible.size()!=0 && possible.front()+ 2*time < cows[i].position ) possible.pop();
+            ans+= possible.size();
+        }
+        if(cows[i].velocity ==1 ) possible.push(cows[i].position);
+    }
+    cout<<ans<<endl;
+}
