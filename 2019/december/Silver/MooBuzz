@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 200000
+#define faster ios_base::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+#define mod 1000000007
+#define vi vector<int>
+#define vpi vector<pair<int,int>>
+#define pb push_back
+#define mp make_pair
+#define read(x) freopen(x, "r", stdin);
+#define write(x) freopen(x, "w", stdout);
+lli k, n, m;
+bool works(int num)
+{
+    int three = num/3;
+    int five = num/5;
+    int fifteen = num/15;
+    int ans  =num-  three - five  +fifteen;
+    if(ans < n) return true; ///num is the nth word
+    return false;
+}
+int main()
+{
+    ifstream fin("moobuzz.in");
+    ofstream fout("moobuzz.out");
+    faster;
+    fin>>n;
+    int max = 1000000000;
+    int pos = 0;
+    for(int a = max; a>=1; a/=2){
+        while(works(pos + a)) pos+=a;
+    }
+    fout<<pos+1<<endl;
+}
