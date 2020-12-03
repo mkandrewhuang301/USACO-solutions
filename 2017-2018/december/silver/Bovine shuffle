@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 100002
+#define faster ios_base::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+#define mod 1000000007
+#define vi vector<int>
+#define vpi vector<pair<int,int>>
+#define pb push_back
+#define mp make_pair
+int n, k;
+int a[MAXN];
+lli largest [8];
+lli smallest[8];
+int main()
+{
+    cin>>n;
+    for(int i  =1;i<=n;i++){
+        cin>>a[i];
+    }
+    bool repeat[MAXN] = {false};
+    for(int i  =1;i<=n;i++){
+       if(repeat[i] == false){
+           vector<int> visited;
+           int j  =i;
+           //cout<<j<<endl;
+            do{
+                visited.push_back(j);
+                j = a[j];
+                if(repeat[j] == true)goto here;
+                //cout<<"JVAL"<<j<<endl;
+            }while(find(visited.begin(), visited.end(), j) == visited.end());
+            if(false){here:continue;}
+            //for(auto it: visited)cout<<"VIS"<<it<<endl;
+            auto found = find(visited.begin(), visited.end(), j);
+            while(found != visited.end()){
+            //..cout<<*found<<endl;
+                repeat[*found] = true;
+                found++;
+            }
+        }
+    }
+    int ans = 0;
+    for(int i = 1; i<=n; i++){
+        if(repeat[i] == true) ans++;
+    }
+    cout<<ans<<endl;
+
+
+}
