@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 5003
+#define faster ios_base::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+#define mod 1000000007
+#define vi vector<int>
+#define vpi vector<pair<int,int>>
+#define pb push_back
+#define mp make_pair
+lli n, q;
+vector<pair<int,int>> adj[MAXN];
+int visited[MAXN]  ={0};
+///Store all the paths from some arbitrary location
+///Given endpoint, go backwards and find start point;
+int number  =0;
+void dfs(int v, int k)
+{
+    visited[v]++;
+    for(auto it: adj[v]){
+        if(visited[it.first] == 0  && it.second>=k){
+            number++;
+            dfs(it.first, k);
+        }
+    }
+}
+int main()
+{
+    faster;
+    freopen("mootube.in", "r", stdin);
+    freopen("mootube.out", "w", stdout);
+    cin>>n>>q;
+    for(int i  =0;i<n-1;i++){
+        int  a,b, r;
+        cin>>a>>b>>r;
+        adj[a].push_back({b,r});
+        adj[b].push_back({a,r});
+
+    }
+    for(int i  =0;i<q;i++){
+        int k, v;
+        cin>>k>>v;
+        dfs(v, k);
+        printf("%d\n", number);
+        number = 0;
+        memset(visited, 0, sizeof visited);
+    }
+}
