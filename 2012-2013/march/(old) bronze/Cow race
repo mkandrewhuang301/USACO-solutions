@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define MAXN 50001
+#define faster ios_base::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+#define mod 1000000007
+#define vi vector<int>
+#define vpi vector<pair<int,int>>
+#define pb push_back
+#define mp make_pair
+lli n, m;
+lli a[MAXN];
+lli largest [8];
+lli smallest[8];
+///Store all the paths from some arbitrary location
+///Given endpoint, go backwards and find start point;
+struct stuff{
+    int time;
+    int speed;
+};
+int main()
+{
+    cin>>n>>m;
+    queue<stuff> brun;
+    queue<stuff> erun;
+    int currtime = 0;
+    int maxt =0;
+    for(int i= 0;i<n;i++){
+        int v, t;
+        cin>>v>>t;
+        maxt+=t;
+        stuff temp;
+        temp.time = t; temp.speed = v;
+        brun.push(temp);
+    }
+    for(int i= 0;i<m;i++){
+        int v, t;
+        cin>>v>>t;
+        stuff temp;
+        temp.time = t; temp.speed = v;
+        erun.push(temp);
+    }
+    //cout<<maxt<<endl;
+    int bts =0, ets = 0, ans =0, lead  =10, bes  =0, els =0;;
+    for(int t=  0; t<maxt; t++){
+        //cout<<"ZZ"<<endl;
+        int ah;
+        if(bts == brun.front().time){brun.pop();bts = 0;}
+        if(ets == erun.front().time) {erun.pop();ets  =0;}
+        if(brun.size())bes+= brun.front().speed;
+        if(erun.size())els+= erun.front().speed;
+        if(bes>  els) ah =1;
+        if(bes <els) ah = -1;
+        if(bes != els && ah!= lead){
+            ans++;
+            lead = ah;
+        }
+        //cout<<t<<" " <<bes<< " "<<els<<endl;
+        bts++; ets++;
+    }
+    if(ans == 0){
+        cout<<0;
+        return 0;
+    }
+    cout<<ans-1<<endl;
+
+}
