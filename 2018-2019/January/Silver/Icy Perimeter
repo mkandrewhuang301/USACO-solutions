@@ -1,0 +1,75 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define faster ios_base::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+#define MAXN 1001
+#define vi vector<int>
+#define vpi vector<pair<int,int>>
+#define pb push_back
+#define mp make_pair
+char a[MAXN][MAXN];
+int  n;
+vector<pair<int,int>> ap;
+int hor[4] = {0, 0, -1, 1};
+int ver[4] = {1, -1, 0, 0};
+int area =0;
+int perimeter = 0;
+void dfs(int i, int j)
+{
+    area++;
+    ///int counter == 0;
+    a[i][j] = '@';
+    int filled =0;
+    int good =0;
+    for(int z = 0;z<4;z++){
+        int y = i + ver[z];
+        int x = j  +hor[z];
+        if(y< 0 || x< 0 || y>=n || x>=n)continue;
+        if(a[y][x] == '@')filled++;
+        else if(a[y][x] == '#') {
+            good++;
+            dfs(y, x);
+        }
+    }
+    perimeter += 4-good -filled;
+
+}
+bool cmp(pair<int,int> a, pair<int,int> b)
+{
+    if(a.first!= b.first) return a.first> b.first;
+    else{
+        return a.second<b.second;
+    }
+}
+int main()
+{
+    freopen("perimeter.in", "r", stdin);
+    freopen("perimeter.out", "w", stdout);
+    cin>>n;
+    //cout<<"p"<<endl;
+    for(int i = 0;i<n;i++){
+        string x;
+        cin>>x;
+        //cout<<"RESULTS"<<endl;
+        for(int j  =0;j<n;j++){
+            char temp = x[j];
+            a[i][j] = x[j];
+            //cout<<x[j]<< " ";
+        }
+    }
+    //int counter = 0;
+    for(int i =0; i<n;i++){
+        for(int j  =0;j<n;j++){
+            if(a[i][j] == '#'){
+                //cout<<"T"<<endl;
+                dfs( i, j); /// get starting point and whatever value the counter is on
+                //counter++;
+                ap.push_back({area, perimeter});
+                perimeter = 0;
+                area = 0;
+            }
+        }
+    }
+    sort(ap.begin(), ap.end(), cmp);
+    cout<<ap[0].first<< " "<<ap[0].second<<endl;
+}
