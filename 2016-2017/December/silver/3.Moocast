@@ -1,0 +1,61 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define faster ios_base::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+#define MAXN 201
+#define vi vector<int>
+#define vpi vector<pair<int,int>>
+#define pb push_back
+#define mp make_pair
+int n;
+struct stuff
+{
+    int i;
+    int x;
+    int y;
+    double r;
+};
+int ans = 0;
+int temp  =0;
+vector<stuff> cow;
+
+int visited[MAXN] = {0};
+void dfs(stuff it, int i)
+{
+      //visited[i][it.y][it.x]++;
+      visited[it.i]++;
+      for(int j = 0;j<n;j++){
+
+         if(j==i)continue;
+         stuff nl=  cow[j];
+          //cout<<(double)sqrt(pow(nl.y - it.y, 2) + pow(nl.x -it.x, 2))<<endl;
+         if(visited[nl.i] == 0 && (double) sqrt(pow(nl.y - it.y, 2) + pow(nl.x -it.x, 2)) <= it.r){   ///If not visited and the radius works
+            dfs(cow[j], i);
+            temp++;
+         }
+      }
+}
+int main()
+{
+    freopen("moocast.in","r",stdin);
+    freopen("moocast.out","w", stdout);
+    cin>>n;
+    for(int i  =0;i<n;i++){
+        int x, y;
+        double r;
+        cin>>x>>y>>r;
+        stuff temp;
+        temp.i  =i;
+         temp.x = x; temp.y = y; temp.r = r;
+         cow.push_back(temp);
+    }
+    for(int i  =0;i<cow.size();i++)
+    {
+        dfs(cow[i], i);
+        ans = max(ans, temp);
+        memset(visited, 0, sizeof(visited));
+        //cout<<temp<<endl;
+        temp  =0;
+    }
+    cout<<ans+1<<endl;
+}
