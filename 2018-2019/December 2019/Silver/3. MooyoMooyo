@@ -1,0 +1,124 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define faster ios_base::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+#define MAXN 201
+#define vi vector<int>
+#define vpi vector<pair<int,int>>
+#define pb push_back
+#define mp make_pair
+///Input points
+///Do a DFS for points 1- 9 every time
+///If the count is larger than k, do another Dfs and set to 0;
+///After all set to 0, go from top to bottom.
+      ///for all values from bottom up that is zero, count that
+      ///every value beyond that that is 1-9 it is that i value -whatever the zero count is
+      ///Once you reach the end, all the point down is 0
+///Have a b
+int n, k;
+int val =0;
+int a[MAXN][10] ={0};
+int hor[4] = {0, 0, -1, 1};
+int ver[4] = {1, -1, 0, 0};
+int visited[MAXN][10] ={0};
+void dfs(int y, int x )
+{
+    visited[y][x]++;
+    for(int i  =0;i<4;i++){
+        int ny= y+ver[i];
+        int nx = x+ hor[i];
+        if(ny>=n || ny<0 || nx<0 || nx>= 10)continue;
+        if( visited[ny][nx] == 0 && a[ny][nx] == a[y][x]){
+            dfs(ny, nx);
+            val++;
+        }
+    }
+}
+void remove(int y, int x, int val)
+{
+    a[y][x] = 0;
+    for(int i  =0;i<4;i++){
+        int ny= y+ver[i];
+        int nx = x+ hor[i];
+        if(ny>=n || ny<0 || nx<0 || nx>= 10)continue;
+        if( a[ny][nx] == val){
+            remove(ny, nx, val);
+        }
+    }
+}
+void replace(int x, int sy)
+{
+    int cz = 0;
+    while(a[sy][x] == 0 && sy>0){
+        cz++;
+        sy--;
+    }
+    ///sy ends on first value not zero, or if all zero ends on 0
+    for(sy; sy>=0, a[sy][x]!=0; sy--){    ///when sy is not 0 or pos is not 0
+        a[sy + cz][x] = a[sy][x];         ///Place +cz =  old place;
+    }
+    ///sy ends on 0 or first value when a[sy] becomes zero;
+    for(int i  =1;i<=cz;i++){
+        a[sy + i][x] = 0;
+    }
+    if(sy != 0){
+        replace(x, sy+cz);
+    }
+}
+int main()
+{
+    freopen("mooyomooyo.in","r", stdin);
+    freopen("mooyomooyo.out", "w", stdout);
+    cin>>n>>k;
+    for(int i  =0;i<n;i++){
+        string x;
+        cin>>x;
+        for(int j = 0;j<10;j++){
+            a[i][j] = x[j] - '0';
+        }
+    }
+    while(true){
+        bool once = false;
+        for(int i  =0;i<n;i++){
+            for(int j = 0;j<10;j++){
+                val = 1;
+                if(a[i][j] != 0 && visited[i][j]  == 0) {dfs(i, j);}
+                if(val>=k){
+                    once = true;
+                    //cout<<a[i][j]<<endl;
+                    remove(i, j, a[i][j]);
+                    //cout<<a[i][j]<<endl;
+                }
+            }
+        }
+        memset(visited, 0, sizeof(visited));
+        if(!once) break;
+        else{
+            for(int j  =0;j<10;j++){
+                replace(j , n-1);
+            }
+        }
+        /*
+        cout<<"AFTER EDITING"<<endl;
+        for(int c = 0;c<n;c++){
+        for(int b  =0;b<10;b++){
+            cout<<a[c][b];
+        }
+        cout<<endl;
+    }
+    cout<<endl;
+    */
+
+
+    }
+
+
+    ///Print answer
+    for(int c = 0;c<n;c++){
+        for(int b  =0;b<10;b++){
+            cout<<a[c][b];
+        }
+        cout<<endl;
+    }
+
+}
