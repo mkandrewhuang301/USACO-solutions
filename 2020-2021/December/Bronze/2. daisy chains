@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+int n;
+using namespace std;
+int main()
+{
+    cin>>n;
+    int a[101];
+    for(int i  =0;i<n;i++){
+        cin>>a[i];
+    }
+    int ans = 0;
+    for(int i = 0;i<n;i++){
+        map<double,int> petals;
+        double sum  =0;
+        int counter = 0;
+        for(int j  = i;j<n;j++)
+        {
+            counter++;
+            sum+= a[j];
+            auto found = petals.find((double)a[j]);
+            if(found != petals.end()){
+                found->second++;
+            }
+            else{
+                petals.insert(pair<double,int> ((double) a[j], 1));
+            }
+            double result = sum/counter;
+            found = petals.find(result);
+            if(found!= petals.end()){
+                ans++;
+            }
+
+
+        }
+    }
+    cout<<ans<<endl;
+
+}
