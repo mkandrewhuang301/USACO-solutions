@@ -1,0 +1,41 @@
+
+#include <bits/stdc++.h>
+int n;
+using namespace std;
+#define MAXN 100001
+#define lli long long int
+int x[MAXN], y[MAXN];
+int cid[MAXN];
+bool cmp(int a,int b)
+{
+	if(x[a]==x[b]) return y[a]<y[b];
+	return x[a]<x[b];
+}
+int main()
+{
+    freopen("moop.in","r", stdin);
+    freopen("moop.out","w",stdout);
+    cin >> n;
+	for(int i=0;i<n;i++)
+	{
+		cin >> x[i] >> y[i];       /// enter the points
+		cid[i] = i;                /// assign each point to a id
+	}
+	sort(cid,cid+n,cmp);           ///Sort ascending x value 
+	int minl[MAXN];
+	int maxr[MAXN];
+	minl[0] = y[cid[0]];           
+	for(int i = 1;i<n;i++){
+        minl[i] = min(y[cid[i]], minl[i-1]);   ///have a prefix sum of the smallest y value visited
+	}
+	maxr[n-1] = y[cid[n-1]];
+	for(int i = n-2;i>=0; i--){
+        maxr[i] = max(y[cid[i]], maxr[i+1]);   ///Have a prefix sum of the largest y value from the right
+	}
+	int ans = 1;
+	for(int i = 0;i<n;i++){
+        if(minl[i] > maxr[i+1]) ans++;        ///if the lowest value of the 
+	}
+	cout<<ans<<endl;
+
+}
