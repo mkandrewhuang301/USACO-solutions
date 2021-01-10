@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+int n, m,k;
+using namespace std;
+#define MAXN 100002
+#define lli long long int
+#define f first
+#define s second
+int a[2501];
+int visited[2501];
+vector<int> adj[2501];
+int dt[2501];
+int check(int v, int p)
+{
+    for(int it: adj[v]){
+        if(it == p) continue;
+        dt[it]++;
+        dt[v]+=  12-check(it, v);
+        dt[v] = (dt[v] -1)%12  +1;
+    }
+    dt[p]++;
+    return dt[v];;
+}
+int main()
+{
+    freopen("clocktree.in","r", stdin);
+    freopen("clocktree.out","w",stdout);
+    cin>>n;
+    for(int i = 0;i<n;i++) cin>>a[i];
+    for(int i = 0;i<n-1;i++){
+        int a,b;
+        cin>>a>>b;
+        a--;b--;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    int ans = 0;
+    for(int i = 0;i<n;i++){
+            for(int j  =0;j<n;j++) dt[j] = a[j];
+        //memset(visited, 0, sizeof(visited));
+        int res = check(i, -1);
+        if(dt[i] == 1 || dt[i] == 12) ans++;
+    }
+    cout<<ans<<endl;
+
+}
