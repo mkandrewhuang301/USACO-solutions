@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+int n, m,k;
+using namespace std;
+#define MAXN 100002
+#define lli long long int
+#define f first
+#define s second
+vector<pair<int,int>>v;
+vector<pair<int,int>> todo[20001];
+vector<lli> sum[100005];
+#define mod 1000000007
+void check()
+{
+    for(int i =0;i<=20000; ++i){                      ///every possible x or y point
+        if(todo[i].size()>0){                      
+            sort(todo[i].begin(), todo[i].end());
+            int ctotal = 0;
+            for(int j = 0 ;j<todo[i].size();j++){
+                ctotal+= todo[i][j].f - todo[i][0].f;             ///Get first distance sum and modify
+            }
+            for(int j = 0;j<todo[i].size();j++){
+                if(j){                                             ///if j to prevent base case when j = 0
+                    ctotal+= (2*j - todo[i].size())*(todo[i][j].f - todo[i][j-1].f);
+                }
+                sum[todo[i][j].s].push_back(ctotal%mod);          ///use vector to get x and then y
+            }
+
+        }
+    }
+}
+int main()
+{
+    //freopen("D://3.in","r",stdin);
+    freopen("triangles.in","r",stdin);
+    freopen("triangles.out","w",stdout);
+    cin>>n;
+    v.resize(n);
+    for(int i = 0;i<n;i++){
+        cin>>v[i].f>>v[i].s;
+    }
+    for(int i  =0;i<n;i++){
+        todo[v[i].f + 10000].push_back({v[i].s, i});
+    }
+    check();
+    for(int i  =0;i<20001;i++){
+        todo[i].clear();
+    }
+    for(int i = 0;i<n;i++){
+        todo[v[i].s  +10000].push_back({v[i].f, i});
+    }
+    check();
+    lli ans = 0;
+    for(int i  =0;i<n;i++){
+       //cout<<sum[i][0]<< "  "<<sum[i][1]<< "  "<<(lli)(sum[i][0] *sum[i][1])<<endl;
+       ans += (sum[i][0] *sum[i][1])%mod;
+    }
+    cout<<ans%mod<<endl;
+
+}
