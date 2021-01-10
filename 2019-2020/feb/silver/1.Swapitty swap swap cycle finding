@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+int n, m,k;
+using namespace std;
+#define MAXN 100002
+#define lli long long int
+int main()
+{
+    //freopen("D://2.in","r", stdin);
+    //freopen("D://2.out","w",stdout);
+    freopen("swap.in","r", stdin);
+    freopen("swap.out","w",stdout);
+    cin>>n>>m>>k;
+    vector<pair<int,int>> sw;
+    for(int i = 0;i<m;i++){
+        int l,r;
+        cin>>l>>r;
+        sw.push_back({l,r});
+    }
+    vector<int> cyc[MAXN];
+    int a[MAXN];
+    for(int i = 1; i<=n;i++)a[i] = i;
+    for(int i = 1;i<=n;i++){
+        int loc = i;
+
+        for(int j  =0; j<m;j++){     ///For all swaps
+            if(loc<sw[j].first || loc>sw[j].second) ;///Value stays the same
+            else loc = sw[j].first -(loc-sw[j].second);
+            cyc[i].push_back(loc);
+        }
+    }
+    for(int i  =1;i<=n;i++)
+        a[*cyc[i].rbegin()]= i;
+    int visited[MAXN] ;
+    for(int i  =1; i<=n; i++){
+        if(visited[i]  == 0){
+            visited[i] = true;
+            int loc = a[i];
+            vector<int> cycle;
+            cycle.push_back(i);
+            while(loc != i){
+                visited[loc] = true;
+                cycle.push_back(loc);
+                loc = a[loc];
+            }
+            int mod = k%cycle.size();
+            for(int j = 0;j<cycle.size();j++){
+                a[cycle[j]] = cycle[(j+mod)%cycle.size()];
+            }
+        }
+    }
+    for(int i = 1; i<=n;i++){
+            cout<<a[i]<<endl;
+    }
+
+}
