@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+#include<string>
+using namespace std;
+#define MAXN 100002
+#define lli long long int
+lli x,y,k,m;
+#define f first
+#define s second
+set<pair<int,int>> possible;
+struct stuff{
+    lli f;
+    lli s;
+    lli times;
+};
+bool bfs(){
+    queue<stuff>q;
+    stuff temp;
+    temp.f =0; temp.s =0; temp.times =0;
+    q.push(temp);
+    possible.insert({0,0});
+    while(!q.empty()){
+
+        stuff v = q.front();
+        q.pop();
+        if(v.times == k) continue;
+        if(possible.find({x,v.s})== possible.end()) {
+            possible.insert({x,v.s});
+            stuff temp; temp.f = x; temp.s = v.s; temp.times = v.times+1;
+            q.push(temp);
+        }
+        if(possible.find({v.f,y})== possible.end()) {
+            possible.insert({v.f,y});
+            stuff temp; temp.f = v.f; temp.s = y; temp.times = v.times+1;
+            q.push(temp);
+        }
+        if(possible.find({0,v.s})== possible.end()) {
+            possible.insert({0,v.s});
+            stuff temp; temp.f = 0; temp.s = v.s; temp.times = v.times+1;
+            q.push(temp);
+        }
+        if(possible.find({v.f,0})== possible.end()) {
+            possible.insert({v.f,0});
+            stuff temp; temp.f = v.f; temp.s = 0; temp.times = v.times+1;
+            q.push(temp);
+        }
+        int dpour = min(v.f, y -v.s);
+        if(possible.find({v.f - dpour,v.s  +dpour})== possible.end()) {
+            possible.insert({v.f -dpour,v.s  +dpour});
+            stuff temp; temp.f = v.f- dpour; temp.s = v.s  +dpour; temp.times = v.times+1;
+            q.push(temp);
+        }
+        int dypour = min(v.s, x - v.f);
+        if(possible.find({v.f + dypour,v.s - dypour})== possible.end()) {
+            possible.insert({v.f + dypour,v.s - dypour});
+            stuff temp; temp.f = v.f + dypour; temp.s = v.s - dypour; temp.times = v.times+1;
+            q.push(temp);
+        }
+    }
+}
+int main()
+{
+    freopen("pails.in","r",stdin);
+    freopen("pails.out","w",stdout);
+   cin>>x>>y>>k>>m;
+   bfs();
+   lli ans= 100000000000;
+   for(auto it: possible){
+      lli sum = it.f + it.s;
+      //cout<<sum<<endl;
+      ans = min(ans, abs(m - sum));
+   }
+   cout<<ans<<endl;
+
+}
