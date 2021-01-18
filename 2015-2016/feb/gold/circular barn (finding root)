@@ -1,0 +1,72 @@
+#include <bits/stdc++.h>
+#include<string>
+using namespace std;
+#define MAXN 100001
+#define lli long long int
+lli n;
+#define f first
+#define s second
+vector<lli> a;
+int rooms[MAXN];
+lli ans = 0;
+bool start(int pos)
+{
+    int total = 0;
+    int i = pos;
+    do{
+        total+=a[i];
+        total--;
+        if(total<0) return false;
+        i++;
+        i%= n;
+    }while(i!=pos);
+    return true;
+}
+lli move(int pos)
+{
+
+    for(int i  = pos;i<n;i++){
+        int sum = a[i];
+        int loc = i;
+        while(sum>0){
+            while(rooms[loc%n] == 1)loc++;
+            rooms[loc%n] = 1;
+            ans+= pow(loc - i, 2);
+            sum--;
+        }
+    }
+    for(int i  =0; i<pos;i++){
+        int sum = a[i];
+        int loc = i;
+        while(sum>0){
+            while(rooms[loc%n] == 1)loc++;
+            rooms[loc%n] = 1;
+            ans+= pow(loc - i, 2);
+            sum--;
+        }
+    }
+}
+int main()
+{
+    freopen("cbarn.in","r",stdin);
+    freopen("cbarn.out","w",stdout);
+   cin>>n;
+   for(int i  =0;i<n;i++){
+        int x;
+        cin>>x;
+        a.push_back(x);
+        //a[i].s = 0;
+   }
+   int stpt;
+   for(int i  =0;i<n;i++){
+        if(start(i)){
+            stpt = i;
+            break;
+        }
+   }
+   move(stpt);
+   cout<<ans<<endl;
+   return 0;
+
+
+}
