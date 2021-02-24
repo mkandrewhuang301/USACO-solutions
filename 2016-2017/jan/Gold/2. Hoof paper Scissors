@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define hoof 0
+#define paper 1
+#define scissor 2
+lli n, k;
+vector<int> a (MAXN);
+int check(int f, int s)
+{
+    if(f == hoof && a[s] == scissor) return 1;
+    if(f== paper && a[s] == hoof) return 1;
+    if(f == scissor && a[s]  == paper) return 1;
+    return 0;
+}
+int main() {
+    freopen("hps.in", "r", stdin);
+    freopen("hps.out","w",stdout);
+    cin>>n>>k;
+    for(int i = 1;i<=n;i++){
+        char x;
+        cin>>x;
+        if(x == 'H') a[i] = hoof;
+        else if(x == 'P') a[i] = paper;
+        else if(x == 'S') a[i] = scissor;
+    }
+    int ans = 0;
+    vector<vector<vector<int>>> dp (n+1, vector<vector<int>> (k+2, vector<int> (3, 0) ));
+    for(int i  = 1; i<=n; i++){
+        for(int j  =1;j<=k+1;j++){
+            int add = check(hoof, i);
+            dp[i][j][hoof] = max(dp[i-1][j][hoof]  +add, max(dp[i-1][j-1][paper] + add, dp[i-1][j-1][scissor]  +add));
+
+            add = check(paper, i);
+            dp[i][j][paper] = max(dp[i-1][j][paper] + add, max(dp[i-1][j-1][hoof]  +add, dp[i-1][j-1][scissor]  +add));
+
+            add = check(scissor, i);
+            dp[i][j][scissor] = max(dp[i-1][j][scissor]  +add, max(dp[i-1][j-1][hoof] + add, dp[i-1][j-1][paper]  +add));
+            if(i == n){
+                ans = max(ans, dp[i][j][hoof]);
+                ans = max(ans, dp[i][j][scissor]);
+                ans = max(ans, dp[i][j][paper]);
+            }
+        }
+    }
+    cout<<ans<<endl;
+
+}
