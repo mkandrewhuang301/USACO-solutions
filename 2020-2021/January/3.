@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+lli n, k;
+int a[1001][1001];
+int main() {
+    cin>>n;
+    for(int i = 0;i<n;i++){
+        for(int j  =0;j<n;j++){
+            cin>>a[i][j];
+        }
+    }
+    ///start by columns
+    int best  =0;
+    int cbest  =0;
+    int curr  =0;
+    for(int j  =0;j<n;j++){
+        for(int i  =0;i<=1;i++){
+            int c  =i;
+            while(c<n){
+                curr+= a[c][j];
+                c+=2;
+            }
+            best = max(best, curr);
+            curr = 0;
+        }
+        cbest+= best;
+        best = 0;
+    }
+    //cout<<cbest<<endl;
+    ///then go by rows
+    best = 0;
+    int rbest  =0;
+    curr = 0;
+    for(int i  =0;i<n;i++){
+        for(int j =0;j<=1;j++){
+            int c = j;
+            //cout<<"ONE"<<endl;
+            while(c<n){
+                curr+= a[i][c];
+                //cout<<a[i][c]<< " ";
+                c+=2;
+            }
+            //cout<<curr<<endl;
+            best = max(best, curr);
+            curr = 0;
+        }
+        //cout<<i<< "  "<<best<<endl;
+        rbest+= best;
+        best = 0;
+    }
+    //cout<<rbest<< " "<<cbest<<endl;
+    cout<<max(rbest, cbest);
+
+
+}
