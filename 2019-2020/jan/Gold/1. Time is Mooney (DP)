@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define hoof 0
+#define paper 1
+#define scissor 2
+lli n, m,c;
+vector<int> edge[MAXN];
+int main() {
+    freopen("time.in","r",stdin);
+    freopen("time.out","w",stdout);
+    cin>>n>>m>>c;
+    int a[1001];
+    for(int i  =0;i<n;i++){
+        cin>>a[i];
+    }
+    int f, s;
+    for(int i  =0;i<m;i++){
+        cin>>f>>s;
+        f--;
+        s--;
+        edge[f].push_back(s);
+    }
+    lli best  =0;
+    vector<vector<lli>> dp(1001, vector<lli>(n+1, -1000000));
+    dp[0][0] = 0;
+    for(int t  =1; t<=1000;t++){
+        for(int v  =0;v<n;v++){
+            for(auto orig: edge[v]){
+                if(dp[t-1][orig]<0)continue;
+                dp[t][v] = max(dp[t][v], dp[t-1][orig]  +a[v]);
+            }
+        }
+    }
+    lli ans  =0;
+    for(int i  =0;i<=1000; i++){
+        ans = max(ans, dp[i][0] - c*i*i);
+    }
+    cout<<ans<<endl;
+
+
+
+
+
+}
