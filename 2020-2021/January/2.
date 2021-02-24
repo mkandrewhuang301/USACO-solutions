@@ -1,0 +1,93 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+lli n, q;
+int psum[MAXN][27], psum2[MAXN][27];
+int gaps[MAXN][27] = {0}, gaps2[MAXN][27];
+int main()
+{
+  cin>>n>>q;
+  string a;
+  cin>>a;
+  psum[0][27] = {0}, psum2[0][27] = {0};
+  gaps[0][27] = {0}, gaps2[0][27] = {0};
+  int lastv[27], lastv2[27];
+  memset(lastv, -1, sizeof(lastv));
+  memset(lastv2, -1, sizeof(lastv2));
+  for(int i  =0;i<n;i++){
+    if(i == 0){
+        psum[i][a[i] - 'A']++;
+        lastv[a[i]-'A'] = i;
+        continue;
+    }
+    for(int j = 0;j<27;j++){
+        psum[i][j] = psum[i-1][j];
+        gaps[i][j] = gaps[i-1][j];
+    }
+    psum[i][a[i] -'A']++;
+    if(lastv[a[i]-'A'] != -1){   ///loop through and see if there was a gap formed
+        for(int j  =0;j<a[i]-'A';j++){
+            //cout<<psum[lastv[a[i] -'A']][j]<< " "<<psum[i][j]<<endl;
+            if(psum[lastv[a[i] -'A']][j] < psum[i][j]) {
+                    gaps[i][a[i]-'A']++;
+                    break;
+            }
+        }
+    }
+    lastv[a[i]-'A'] = i;             ////Last position where this value occured;
+  }
+  ///Left side
+
+  for(int i  =n-1;i>=0;i--){
+    if(i == n-1){
+        psum2[i][a[i] - 'A']++;
+        lastv2[a[i]-'A'] = i;
+        continue;
+    }
+    for(int j = 0;j<27;j++){
+        psum2[i][j] = psum2[i+1][j];
+        gaps2[i][j] = gaps2[i+1][j];
+    }
+    psum2[i][a[i] -'A']++;
+    if(lastv2[a[i]-'A'] != -1){   ///loop through and see if there was a gap formed
+        for(int j  =0;j<a[i]-'A';j++){
+            //cout<<psum[lastv[a[i] -'A']][j]<< " "<<psum[i][j]<<endl;
+            if(psum2[lastv2[a[i] -'A']][j] < psum2[i][j]) {
+                    gaps2[i][a[i]-'A']++;
+                    break;
+            }
+        }
+    }
+    lastv2[a[i]-'A'] = i;             ////Last position where this value occured;
+  }
+
+
+  for(int i  =0;i<q;i++){
+    int l,r;
+    cin>>l>>r;
+    l--;
+    r--;
+    //cout<<a[l]<< "  "<<a[r]<<endl;
+    int ans  =0;
+    if(l!=0){                      ///This side works
+        for(int j  =0;j<27;j++){
+            if(psum[l-1][j])ans+= gaps[l-1][j]+1;
+        }
+    }
+    //cout<<ans<<endl;
+    if(r != n-1){
+        for(int j  =0;j<27;j++){
+            if(psum2[r+1][j])ans+= gaps2[r+1][j]+1;
+        }
+    }
+    cout<<ans<<endl;
+  }
+
+
+
+
+}
