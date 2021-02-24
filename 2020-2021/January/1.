@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+lli n, k;
+struct stuff{
+    int f;
+    int s;
+    int one = 0;
+    int two  =0;
+};
+vector<stuff> moves;
+
+int total[MAXN]  ={0};
+void find(int st)   /// try and delete steps once we done them twice
+{
+    set<int> comp;
+    set<int> unique;
+    int head = st;
+    unique.insert(st);
+    do{
+        comp.insert(head);
+        for(int i  =0;i<moves.size();i++){
+            if(head == moves[i].f){
+                    head = moves[i].s;
+                    if(unique.find(head) == unique.end()){
+                            unique.insert(head);
+                            if(moves[i].one){
+                                moves.erase(moves.begin()  + i);
+                                i--;
+                            }
+                            else{
+                                moves[i].one++;
+                            }
+                    }
+            }
+            else if(head ==moves[i].s) {
+                    head = moves[i].f;
+                    if(unique.find(head) == unique.end()){
+                            unique.insert(head);
+                            if(moves[i].one){
+                                moves.erase(moves.begin()  +i);
+                                i--;
+                            }
+                            else{
+                                moves[i].one++;
+                            }
+                    }
+            }
+        }
+    }while(comp.find(head) == comp.end());
+    for(auto it: comp){
+        total[it] = unique.size();
+    }
+}
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cin>>n>>k;
+    for(int i  =0;i<k;i++){
+        int f, s;
+        cin>>f>>s;
+        f--;s--;
+        stuff temp; temp.f =f; temp.s = s;
+        moves.pb(temp);
+    }
+    for(int i  =0;i<n;i++){
+        if(total[i] != 0)continue;
+        find(i);
+    }
+    for(int i  =0;i<n;i++){
+        cout<<total[i]<<endl;
+    }
+    return 0;
+}
