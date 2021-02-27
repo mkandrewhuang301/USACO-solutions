@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 10000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+lli n, m,k;
+string s;
+#define ma  26
+#define mn  100001
+int a[26][26];
+int cst[mn][ma];
+int ps[mn][ma];
+int dp[mn][ma];
+int dpmin[mn];
+
+int main() {
+    freopen("cowmbat.in","r",stdin);
+    freopen("cowmbat.out","w",stdout);
+    ///1. input values
+    cin>>n>>m>>k>>s;
+    lp(i ,m){
+        lp(j,m){
+            cin>>a[i][j];
+        }
+    }
+    ///Floyd-Warshall
+    lp(c,m){
+        lp(s,m){
+            lp(e, m){
+               a[s][e] = min(a[s][e], a[s][c] + a[c][e]);
+            }
+        }
+    }
+    ///Creating the cost for every letter to change into letters a-n
+    ///Also create a prefix sum array for the amount of days to make letters 1-i all to the same letter y;
+    loop(i, 1, n){
+        lp(j,m){
+            cst[i][j] = a[s[i-1] - 'a'][j];
+            ps[i][j] = ps[i-1][j]  + cst[i][j];
+        }
+    }
+    ///Since we are finding the minimum, set both dp originally to infinity. 
+    ///as we are using a memset, use hex 0x3f to represent infinity
+    memset(dp, 0x3f, sizeof dp);
+    memset(dpmin, 0x3f, sizeof(dpmin));
+    ///Set dp of nothing to equal 0 days
+    dpmin[0] = 0;
+    ///Dp algorithm. For the first i letters of string (different substrings) and for the different letters
+    ///1. Either change this one to match the previous letter  (works when i<k and when the consecutive is greater than k
+    ///2. once i>=k, change the rightmost k values to letter j
+    ///dpmin provides the best sequence of letters for the substring (0,i);
+    loop(i,1, n){
+        lp(j,m){
+            dp[i][j] = min(dp[i][j], dp[i-1][j]+ cst[i][j]);
+            if(i>=k) dp[i][j] = min(dp[i][j], ps[i][j] - ps[i-k][j]  + dpmin[i-k]);
+            dpmin[i] = min(dpmin[i], dp[i][j]);
+        }
+    }
+    ///print best for  the full string
+    cout<<dpmin[n]<<endl;
+
+
+
+}
