@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 1000000000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+typedef pair<int, int> pii;
+typedef pair<int, pii> edge; // location, <flow, cost>,
+typedef pair<int, pii> vertex; // cost, <vertex, flow>
+lli n, m;
+string s;
+bool processed[MAXN];
+int dp[1001][1001];
+vector<edge>edges[1001];
+int main() {
+    freopen("pump.in","r",stdin);
+    freopen("pump.out","w",stdout);
+    memset(dp, 1, sizeof(dp));
+    dp[1][1000] = 0;
+    ///Input values and create a bidirectional adjacency matrix
+    cin>>n>>m;
+    lp(i,m){
+        int a,b,c,f;
+        cin>>a>>b>>c>>f;
+        edges[a].pb(edge(b,{f,c}));
+        edges[b].pb(edge(a,{f,c}));
+    }
+    ///run a modified Djikstras  with dp storing the minimum cost to reach location x with a flow of y
+    priority_queue<vertex> q;
+    q.push(vertex(0,{1, 1000}));
+    ///store answer as -1 initially and find the best flowrate/cost ratio
+    double ans = -1;
+    while(!q.empty()){
+        vertex v = q.top();q.pop();
+        ///vertex format  = vertex and flow. Sorted by cost
+        ///Have an extra conditional when the current vertex is the endpoint, where the answer is the max of old answer and the current flow/ dp cost value
+        if(v.second.first == n){
+            ans = max(ans, v.second.second/ (double)dp[v.second.first][v.second.second]);
+            continue;
+        }
+        ///Loop through all the paths that the edge can go to
+        for(edge out: edges[v.second.first]){
+            /// new flow is min of the old flow and the new flow in the path (since bottlenecks)
+            int nf = min(out.second.first, v.second.second);
+            ///new cost is the minimum cost of reaching vertex v with flow m  plus the cost of moving to the new location
+            int nc = dp[v.second.first][v.second.second]  +out.second.second;
+            ///nd is the new vertex, where it ended up
+            int nd =out.first;
+            ///If the new cost is less than the previous minimum for that location and flow, update and add to djikstras
+            if(nc<dp[nd][nf]){
+                dp[nd][nf] = nc;
+                q.push(vertex(-dp[nd][nf], {nd, nf}));
+            }
+        }
+    }
+    ///output the best rate *1000000
+    cout<<(int)(1000000*ans)<<endl;
+
+
+}
