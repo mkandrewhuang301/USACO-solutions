@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 200001
+#define INF 1000000000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n, m;
+int size[MAXN];
+int link[MAXN];
+vector<int> adj[MAXN];
+bool visited[MAXN]= {false};
+int find(int x)
+{
+    while(link[x] != x) x = link[x];
+    return x;
+}
+void unite (int a, int b)
+{
+    a = find(a);
+    b = find(b);
+    if(a<b)swap(a,b);
+    size[a]+= size[b];
+    link[b]  =a;
+}
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    freopen("closing.in","r",stdin);
+    freopen("closing.out","w",stdout);
+    cin>>n>>m;
+    lp(i, m){
+        int f,s;
+        cin>>f>>s;
+        adj[f].pb(s);
+        adj[s].pb(f);
+    }
+    loop(i, 1, n) link[i] = i;
+    loop(i, 1, n) size[i] = 1;
+    vector<int> parts;
+    lp(i, n){
+        int x;
+        cin>>x;
+        parts.pb(x);
+    }
+    vector<string>ans;
+    for(int i = n-1; i>=0; i--){
+        int x = parts[i];
+        visited[x] = true;
+        for(auto it: adj[x]){
+            if(visited[it]){
+                if(find(x) != find(it)) unite(x, it);
+            }
+        }
+        ans.pb(size[find(x)] == n -  i ? "YES":"NO");
+    }
+    for(int i = n-1; i>=0; i--)printf("%s\n",ans[i].c_str());
+    return 0;
+}
