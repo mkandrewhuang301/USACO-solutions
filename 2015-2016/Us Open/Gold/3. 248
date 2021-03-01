@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 289
+#define INF 1000000000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n, m;
+int main() {
+    freopen("248.in","r",stdin);
+    freopen("248.out","w",stdout);
+    cin>>n;
+    int a[MAXN];
+    lp(i ,n)cin>>a[i];
+    int dp[MAXN][MAXN];
+    int ans = 0;
+    ///loop through all possible subarray lengths
+    loop(len, 1, n){
+        for(int i = 0;i +len<=n; i++){
+            int j = i+len-1;
+            dp[i][j] = -1;
+            ///get all possible start and end points. If length is 1, then a[i][i]  =1
+            if(len ==1) dp[i][j] = a[i];
+            ///For all intermediate between i and j, if there is a two that work , if you can combine them ,compress the ranges into one value and find the maximum value for that range
+            for(int k = i; k<j; k++){
+                if(dp[i][k] == dp[k+1][j] && dp[i][k]>0){
+                    dp[i][j] = max(dp[i][j], dp[i][k]+1);
+                }
+            }
+            ///Find the maximum in all possible subarrays
+            ans = max(ans, dp[i][j]);
+        }
+    }
+    cout<<ans<<endl;
+}
