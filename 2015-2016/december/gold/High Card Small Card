@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 50001
+#define INF 1000000000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n, m;
+bool cmp(int a, int b)
+{
+    return a>b;
+}
+int main() {
+    freopen("cardgame.in", "r", stdin);
+    freopen("cardgame.out", "w", stdout);
+    cin>>n;
+    int e[MAXN];
+    bool seen[2*MAXN];
+    lp(i,n){
+       cin>>e[i];
+       seen[e[i]] = true;
+    }
+    //sort(e, e +n/2);
+    //sort(e  +n/2, e+n, cmp);
+    vector<int >b;
+    for(int i  =1; i<=2*n;i++){
+        if(!seen[i])b.pb(i);
+    }
+    set<int>small, big;
+    lp(i,n){
+        if(i<n/2){
+            small.insert(b[i]);
+        }
+        else big.insert(b[i]);
+    }
+    int ans  =0;
+    lp(i,n){
+        if(i < n/2){
+            auto it = big.lower_bound(e[i]);
+            if(it == big.end())continue;
+            big.erase(it);
+            ans++;
+        }
+        else{
+            auto it = small.lower_bound(e[i]);
+            if(it == small.begin())continue;
+            it--;
+            small.erase(it);
+            ans++;
+        }
+    }
+    cout<<ans<<endl;
+
+
+}
