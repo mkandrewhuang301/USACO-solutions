@@ -1,0 +1,91 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 1001
+#define INF 1000000000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n, m;
+int a[MAXN][MAXN];
+struct stuff
+{
+    int cost, y,x, smell;
+};
+///this operator overloading allows us to compare two stuff structs
+bool operator > (const stuff &a, const stuff &b)
+{
+    return a.cost>b.cost;
+}
+///calc provides the next move (or moves if it lands on 4) we are doing the point on path and direction
+stuff calc(stuff state, int dy, int dx)
+{
+    int y = state.y  +dy; int x = state.x + dx;
+    ///We dont want if out of bounds or when it is 0 or when we reach 3 without smelly
+    if(x<0 || x>=m || y<0 || y>=n)return stuff{-1, 0, 0,0};
+    if(a[y][x] == 0 || (a[y][x] == 3 && state.smell == 0) ) return stuff{-1, 0, 0,0};
+    if(a[y][x] == 1) return stuff{state.cost+1, y,x, state.smell};
+    if(a[y][x] == 2) return stuff{state.cost+1, y,x, 1};
+    if(a[y][x] == 3 ) return stuff{state.cost+1, y,x, 1};
+    if(a[y][x] == 4 ) {
+        /// we recurse this function and go to the next location. 
+        stuff next = calc(stuff{state.cost+1, y,x,0},dy,dx);
+        ///if final location we end up is a 0 or out of bounds or any other, then just give the best point to reach all locations on the "slide"
+        if(next.cost== -1){
+            return stuff{state.cost+1, y,x, 0};
+        }
+        else{
+            return next;
+            ///if good return the final location
+        }
+    }
+}
+int dx[4] = {0,0,1,-1};
+int dy[4] = {1,-1,0, 0};
+///Dp gives best number of moves to reach location i ,j;
+int dp[MAXN][MAXN][2];
+int main() {
+    freopen("dream.in","r",stdin);
+    freopen("dream.out","w",stdout);
+    cin>>n>>m;
+    for(int i = 0;i<n;i++){
+        for(int j = 0;j<m;j++){
+            ///create grid and make the dp (minimum) moves for all infinity;
+            cin>>a[i][j];
+            dp[i][j][0] = dp[i][j][1] = 100000000;
+        }
+    }
+    ///set base case as zero
+    dp[0][0][0] = 0; 
+    ///Not really sure why a priority queue looks like this
+    priority_queue<stuff,vector<stuff>, greater<stuff>> q;
+    ///push start value
+    q.push(stuff{0,0,0,0});
+    while(!q.empty())
+    {
+        stuff next = q.top(); q.pop();
+        ///only go on if you are minimizing the vertex. essentially it is like a djistraks
+        if(next.cost> dp[next.y][next.x][next.smell])continue;
+        lp(i,4){
+            stuff move = calc(next, dy[i], dx[i]);
+            ///If the new location is impossible to reach, terminate and move on
+            if(move.cost == -1)continue;
+            ///If the new move gives a better point to there, edit it
+            if(dp[move.y][move.x][move.smell] > move.cost){
+                dp[move.y][move.x][move.smell] = move.cost;
+                q.push(move);
+            }
+        }
+    }
+    ///output. If unreachable -1 else print the best of either smelly or not smelly
+    if(dp[n-1][m-1][1] == 100000000 && dp[n-1][m-1][0] == 100000000){
+        cout<<-1;
+        return 0;
+    }
+    cout<<min(dp[n-1][m-1][1], dp[n-1][m-1][0]);
+
+
+}
