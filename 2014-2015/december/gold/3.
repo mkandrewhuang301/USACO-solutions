@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 1001
+#define INF 1000000000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+lli n, t;
+int main() {
+    //freopen("D://2.in","r",stdin);
+    freopen("cowjog.in","r",stdin);
+    freopen("cowjog.out","w",stdout);
+    cin>>n>>t;
+    multiset<lli> xf; ///give final location after t minutes
+    int ans  =0;
+    ///Im dumb essentially do longest increasing subsequence since start pos changing
+    lp(i,n){
+        lli x,v;
+        cin>>x>>v;
+        lli endpt = x + t*v;
+        auto it = lower_bound(xf.begin(), xf.end(), endpt);
+        if(it == xf.begin()){
+            xf.insert(endpt);
+        }
+        else{
+            it--;
+            xf.erase(it);
+            xf.insert(endpt);
+        }
+
+    }
+    cout<<xf.size()<<endl;
+
+}
