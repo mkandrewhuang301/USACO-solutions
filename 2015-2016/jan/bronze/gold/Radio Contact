@@ -80,7 +80,7 @@ int main() {
         }
     }
 
-    cout<<dp[n][m];
+    cout<<dp[n][m];;
 
 
 
