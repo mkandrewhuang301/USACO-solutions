@@ -1,0 +1,71 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 201
+#define INF 10000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+lli n;
+int main() {
+    freopen("lightsout.in","r",stdin);
+    freopen("lightsout.out","w",stdout);
+    cin>>n;
+    pair<lli,lli> a[MAXN];
+    ///enter points
+    for(int i = 0;i<n;i++){
+        cin>>a[i].f>>a[i].s;
+    }
+    ///make the polygon
+    vector<int> p (1, 0);
+    lp(i, n){
+        ///obtain next 2 points, that way we can have 2 vectors
+        int j = (i+1)%n;
+        int k = (i+2)%n;
+        ///get distance  (since parallel to x and y axis it is easy to get)
+        p.pb(abs(a[j].f - a[i].f)  +abs(a[j].s - a[i].s));
+        ///since u X v = |u||v|sin(theta), if cross product negative it is counter and positive clockwise
+        p.pb((a[i].f - a[j].f)* (a[k].s - a[j].s) - (a[k].f - a[j].f)*(a[i].s - a[j].s)>0 ? -1:-2);
+    }
+    ///Start at 0, end at zero (duplicate) in order to make it a "circle and connected"
+    p.back() = 0;
+    ///distance from point to 0
+    int toexit[MAXN];
+    toexit[0] = 0;
+    ///path counterclockwise
+    lp(i, n){
+        toexit[i+1] = toexit[i]  +p[2*i + 1];
+    }
+    toexit[n] = 0;
+    ///find minimum of left to right, to get best 
+    for(int i = n-1; i>=0; i--){
+        toexit[i] = min(toexit[i], toexit[i+1]  + p[2*i+1]);
+        //cout<<toexit[i]<<endl;
+    }
+    ///store all segments and different lengths
+    multiset<vector<int>> all;
+    for(int i  =0; i<p.size(); i+=2){
+        for(int len = 1; i+len<= p.size(); len+=2){
+            all.insert(vector<int>(p.begin()  +i, p.begin() + i + len));
+        }
+    }
+    ///at each location, trysegments until minimum that is unique, and then decide how to go back. Subtract original back and that is extra stuff
+    int ans = 0;
+    for(int i = 2; i+2<=p.size(); i+=2){
+        int ln;
+        int fcost = 0;
+        for( ln = 1; ;ln+=2){
+            if(all.count(vector<int> (p.begin()  +i, p.begin()  +i  +ln )) == 1){
+                break;
+            }
+            fcost+= p[i+ln];
+            //cout<<fcost<<endl;
+        }
+        ans = max(ans, fcost + toexit[(i+ln)/2] - toexit[i/2] );
+    }
+    cout<<ans<<endl;
+
+}
