@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 50001
+#define INF 1000000000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+lli n;
+int main() {
+    freopen("circlecross.in","r",stdin);
+    freopen("circlecross.out","w",stdout);
+    cin>>n;
+    int ans = 0;
+    vector<int>a (2*n);
+    lp(i, 2*n){
+        cin>>a[i];
+    }
+    map<int,int> idtopos;
+    ordered_set seen;
+    loop(i,1, 2*n){
+        int v = a[i];
+
+        if( idtopos.find(v) == idtopos.end()){
+            idtopos.insert({v, i});
+            int pos = i;
+            seen.insert(pos);
+        }
+        else{
+            auto it = idtopos.find(a[i]);
+            int pos = it->second;
+            //cout<<pos<<endl;
+            //cout<<seen.order_of_key(pos);
+            ans+= seen.size() - 1 - ((int)seen.order_of_key(pos));
+            //cout<<seen.size() - 1 - ((int)seen.order_of_key(pos))<<endl;
+            auto del = seen.find(pos);
+            seen.erase(del);
+        }
+
+    }
+    cout<<ans<<endl;
+}
