@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 10000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+lli n, k;
+///Create adj  matrix
+vector<int> adj[MAXN];
+///make dp, with all initially -1 (we want -1 since it is possible for a dp to be 0)
+vector<vector<lli>> dp( MAXN , vector<lli> (3, -1));
+///all color -1 since color may be 0 , 1, 2
+vector<int> color (MAXN, -1);
+lli solve( int v, int c, int parv, int parc)
+{
+    ///if color equals previous or we are trying to assign a color while it is prepainted different return 0 since not possible
+    if(c == parc || (color[v]>=0 && c != color[v]))return 0;
+    ///for cases where substates are repeated,just return for faster 
+    if(dp[v][c] >=0){
+        return dp[v][c];
+    }
+    ///set dp as 1 since when we had -1 it screwed up answers
+    dp[v][c] = 1;
+    ///all nodes adjacent to it
+    for(int out: adj[v]){
+            ///dont go back
+        if(out == parv)continue;
+        lli chcolor = 0;
+        ///get total of child nodes with certain color
+        for(int color = 0; color<3; color++){
+            chcolor+= solve(out, color,v, c );
+            chcolor%= mod;
+        }
+        ///multiply since each are distinct. If there are 2 children ,total is child 1 poss * child 2 possib
+        dp[v][c] *= chcolor;
+        dp[v][c] %= mod;
+    }
+    return dp[v][c];
+}
+int main() {
+    freopen("barnpainting.in","r",stdin);
+    freopen("barnpainting.out","w",stdout);
+    cin>>n>>k;
+    ///create adj matrix
+    lp(i, n-1){
+        int x,y;
+        cin>>x>>y;
+        x--; y--;
+        adj[x].pb(y);
+        adj[y].pb(x);
+    }
+    ///input current colors
+    lp(i, k){
+        int v, c;
+        cin>>v>>c;
+        v--;c--;
+        color[v] = c;
+    }
+    ///get aribitary node and test all possible colors
+    lli ans = solve(0, 0 ,-1, -1)  +solve(0, 1, -1, -1)  +solve(0, 2, -1, -1);
+    cout<<ans%mod<<endl;;
+
+}
