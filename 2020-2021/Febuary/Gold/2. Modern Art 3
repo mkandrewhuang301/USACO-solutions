@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 10000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n;
+int main() {
+    
+    cin>>n;
+    int a[301];
+    for(int i  =1;i<=n;i++){
+        cin>>a[i];
+    }
+    vector<vector<int>> dp (n+1, vector<int> (n+1, 0));
+    for( int length = 1; length <=n; length++){
+        for(int i = 1; i + length<=n ;i++){
+            int j = i  + length;
+            if(a[i] == a[j]){
+                dp[i][j] = max(dp[i][j], 1 + dp[i+1][j-1]);
+            }
+            for(int k  = i+1; k<j; k++){
+                dp[i][j] = max(dp[i][j] , dp[i][k]  + dp[k][j]);
+           }
+        }
+    }
+    cout<<n - dp[1][n]<<endl;
+
+}
+
