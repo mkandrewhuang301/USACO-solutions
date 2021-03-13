@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 10000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n;
+int main() {
+    cin>>n;
+    vector<int> a(n);
+    int mx  = 0;
+    ///input values. Get largest value
+    for(auto& t: a){
+        cin>>t;
+        mx = max(mx, t);
+    }
+    ///add number of occurences of this number of piles
+    vector<int> cnt (mx +1); for(int t: a)cnt[t]++;
+    ///add total number of piles below this pile 
+    for (int i = 1; i <= mx; ++i) {cnt[i] += cnt[i-1];}
+	lli ans = 0;
+	///test all possible take away rock values
+    loop(x,1, mx){
+        vector<int> count{0};
+        ///for all piles, see how many of range xt to x(t+1) still available for taking
+        for(int t = 1; x*t<=mx; t++)
+            {
+                count.pb(cnt[min(mx, x*(t+1)-1)] - cnt[x*t-1]); ///why -1??
+            }
+        vector<int> odd;
+        ///if #piles to take is odd, add 
+        for(int t = 1; t<count.size(); t++)
+            if(count[t]&1) odd.pb(t);
+        ///the only solutions which work are either 1. all even except 1 or 2. all even except 2 (where if take one above, makes all even since bottom is +1)
+        if(odd == vector<int>{1} || (odd.size() == 2 && odd[0]+1 == odd[1])) ///why 1
+            ans+=count[odd.back()];
+        ///add the number of ways to take from the number of piles
+    }
+    cout<<ans<<endl;
+}
+
