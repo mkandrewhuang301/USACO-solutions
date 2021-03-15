@@ -1,0 +1,93 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define MAXVAL 1000000001
+#define INF 10000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n, lx,ly, bx,by ;
+vector<int> ylin[MAXN];
+vector<int> xlin[MAXN];
+struct stuff
+{
+    int x,y, t;
+};
+unordered_map <int,int> xval;
+unordered_map<int,int> yval;
+int xlen  =0,  ylen = 0;
+bool done = false;
+void bfs (int y,int x)
+{
+    queue<stuff> q;
+    q.push({x,y, 0});
+    while(!q.empty()){
+        stuff v = q.front();q.pop();
+        cout<<v.t<<endl;
+        if(v.x <0) v.x*= -1;
+        if(v.y<0) v.y*= -1;
+        if(v.x == bx && v.y == by){
+            cout<<v.t -1<<endl;
+            done  =true;
+            return;
+        }
+        for(auto& itx : ylin[v.y]){
+            if(itx <0 || itx == v.x)continue;
+            itx *= -1;
+            q.push({itx, v.y, v.t +1});
+        }
+        for(auto& ity : xlin[v.x]){
+            if(ity < 0 || ity ==  v.y)continue;
+            ity *= -1;
+            q.push({v.x, ity, v.t + 1});
+        }
+    }
+}
+int xadd(int x)
+{
+    auto found = xval.find(x);
+    if(found ==  xval.end()){
+        xval.insert({x, xlen++});
+    }
+    found = xval.find(x);
+    return found->second;
+}
+int yadd(int y)
+{
+    auto found = yval.find(y);
+    if(found == yval.end()){
+        yval.insert({y, ylen++});
+    }
+    found = yval.find(y);
+    return found->second;
+}
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    freopen("D://9.in","r",stdin);
+    //freopen("lasers.out","w",stdout);
+   cin>>n>>lx>>ly>>bx>>by;
+   lx = xadd(lx); ly = yadd(ly);
+   bx = xadd(bx); by = yadd(by);
+   //cout<<by<< "  "<<bx<<endl;
+   xlin[bx].pb(by);
+   ylin[by].pb(bx);
+   for(int i = 0;i< n;i++){
+      int x, y;
+      cin>>x>>y;
+      y = yadd(y);
+      x = xadd(x);
+      xlin[x].pb(y);
+      ylin[y].pb(x);
+   }
+
+   bfs(ly, lx);
+   if(!done)cout<<-1<<endl;
+   return 0;
+
+}
+
