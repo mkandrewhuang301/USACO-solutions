@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 10000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n,d;
+int a[2*MAXN], b[2*MAXN], dist[2*MAXN];
+struct cmpa
+{
+    bool operator()(int f, int s)const
+    {
+        return b[f] < b[s];
+    }
+};
+struct cmpb
+{
+    bool operator()(int f, int s)const
+    {
+        return a[f] < a[s];
+    }
+};
+multiset<int, cmpa> cona;
+multiset<int, cmpb> conb;
+int mx, cur;
+    int  q[2*MAXN];
+int main() {
+   // freopen("piepie.in","r",stdin);
+    //freopen("piepie.out","w", stdout);
+    cin>>n>>d;
+    ///add points
+    for(int i = 0;i<2*n;i++){
+        cin>>a[i]>>b[i];
+        a[i] *=-1, b[i]*= -1;
+        dist[i] = -1;
+    }
+    ///if value is 0, it is a source node (it is the smallest)
+    /// else, add it to the ones to be processed
+    lp(i, n){
+        if(b[i] == 0){
+            dist[i] = 1;
+            q[mx++] = i;
+        }
+        else
+            cona.insert(i);
+        if(a[i+n] ==0){
+            dist[i+n] = 1;
+            q[mx++] = n+i;
+        }
+        else
+            conb.insert(n+i);
+    }
+    multiset<int, cmpa>:: iterator ita;
+    multiset<int, cmpb>:: iterator itb;
+    ///every time when cur< mx, there is more to be processed
+    while(cur<mx){
+        int i = q[cur];
+        ///get value
+        if(i<n){
+                ///continue doing it if possible to get minimum distance from all vertex from this node
+            while(true){
+                itb = conb.lower_bound(i);
+                if(itb == conb.end() || a[*itb] > a[i] + d)break;
+                dist[*itb] = dist[i] + 1;
+                q[mx++] = *itb;
+                conb.erase(itb);
+            }
+        }
+        else{
+            while(true){
+                ita = cona.lower_bound(i);
+                if(ita == cona.end() || b[*ita] > b[i] + d) break;
+                dist[*ita] = dist[i]  +1;
+                q[mx++] = *ita;
+                cona.erase(ita);
+            }
+        }
+        cur++;
+    }
+    lp(i,n)cout<<dist[i]<<endl;
+}
+
