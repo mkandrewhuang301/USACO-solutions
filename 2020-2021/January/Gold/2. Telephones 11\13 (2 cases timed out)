@@ -1,0 +1,61 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define MAXVAL 1000000001
+#define INF 1000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n, k;
+vector<int> cow[51];
+vector<int> adj[51];
+vector<int> dp (MAXN +1, INF);
+int a[MAXN];   ///breed at point
+void bfs(int root)
+{
+    priority_queue<int> q;
+    q.push(-1*root);
+    dp[root] = 0;
+    while(!q.empty()){
+        int v = q.top();q.pop();     ///v = i point of cow
+        v*= -1;
+        for(auto it: adj[a[v]]){        ///get friend breeds
+            for(auto pt: cow[it]){   ///find points of friend breeds
+                if(dp[v] + abs(v - pt)  < dp[pt]){
+                    dp[pt]  = dp[v] + abs(v-  pt);
+                    q.push(-1*pt);
+                }
+            }
+        }
+    }
+    if(dp[n-1] == INF)cout<<-1, return ;
+    cout<<dp[n-1];
+}
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    freopen("D://6.in","r",stdin);
+    cin>>n>>k;
+    lp(i, n){
+        int x;
+        cin>>x;
+        x;
+        cow[x].pb(i);
+        a[i] = x;
+    }
+    for(int i= 1 ;i<=k;i++){
+        string x;
+        cin>>x;
+        for(int j =0 ;j<x.length(); j++){
+            if(x[j] == '0')continue;
+            adj[i].pb(j+1);
+        }
+    }
+    bfs(0);
+    return 0;
+}
+
