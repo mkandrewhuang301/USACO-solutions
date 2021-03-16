@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define MAXVAL 1000000001
+#define INF 1000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+int n, k;
+ordered_set cow;
+ordered_set woc;
+vector<int> height;
+int main() {
+    freopen("bphoto.in","r",stdin);
+    freopen("bphoto.out","w",stdout);
+    cin>>n;
+    lp(i,n){
+        int x;
+        cin>>x;
+        cow.insert(x);
+        height.pb(x);
+    }
+    int ans = 0;
+    for(auto it:height)
+    {
+        cow.erase(it); ///since no duplicates, can just erase that value
+        ///Right side gives number of values smaller, so n - smaller num = total number larger
+        int r = cow.size() - cow.order_of_key(it);
+        ///same goes for this, although we are just making it backwards, 
+        int l = woc.size() - woc.order_of_key(it);
+        woc.insert(it);
+        if(max(l, r)  >2* min(l, r)) ans++; ///this part is very cool , condenses the finding left or right
+    }
+    cout<<ans<<endl;
+}
+
