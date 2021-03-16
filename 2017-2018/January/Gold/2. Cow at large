@@ -1,0 +1,88 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define MAXVAL 1000000001
+#define INF 10000000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int n, k,  parent[MAXN], vis[MAXN];
+vector<int> depth(MAXN, -1);
+vector<int> adj[MAXN];
+vector<int> leaf;
+int len = 1, ans = 0;
+set<int> ocount;
+///construct a tree with depth ,and the parent for each node
+void construct(int root)
+{
+    queue<int> q;
+    q.push(root);
+    depth[root]  =0;
+    parent[root] = -1;
+    while(!q.empty()){
+        int v = q.front();
+        q.pop();
+        if(adj[v].size() ==1) leaf.pb(v);
+        for(auto it: adj[v]){
+            if(depth[it] != -1)continue;
+            depth[it] = depth[v]  +1;
+            parent[it] = v;
+            q.push(it);
+        }
+    }
+}
+bool cmp (int a, int b)
+{
+    return depth[a] < depth[b];
+}
+///doing a dfs fill. if value already seen before, add to a set for later subtraction for overcounting
+void fill(int v, int i)
+{
+    for(auto it: adj[v]){
+        if(it == parent[v])continue;
+        if(vis[it] != i && vis[it] != 0) ocount.insert(vis[it]);
+        vis[it] = i;
+        fill(it, i);
+    }
+}
+int main() {
+    freopen("atlarge.in","r", stdin);
+    freop("atlarge.out","w",stdout);
+    cin>>n>>k;
+    for(int i = 0;i<n -1;i++){
+        int a,b;
+        cin>>a>>b;
+        adj[a].pb(b);
+        adj[b].pb(a);
+    }
+    ///create grid
+    construct(k);
+    ///sort by smallest to deepest, since usually deepest is the one that is covered
+    sort(leaf.begin() ,leaf.end(), cmp);
+    for(auto v: leaf){
+        if(vis[v])continue;
+        int ndepth = depth[v];
+        while(true){
+            int nxt = parent[v];
+            ///if bessie reaches first, have that farmer fill for all nodes that he reached (that bessie cannot reach)
+            if( depth[nxt] < ndepth - depth[nxt]){
+                ans++;
+                fill( v, len++);
+                ///ans subtract the number of ones that a farmer already did
+                ans-= ocount.size();
+                ocount.clear();
+                break;
+            }
+            v = nxt;
+
+        }
+    }
+    cout<<ans<<endl;
+
+
+}
+
