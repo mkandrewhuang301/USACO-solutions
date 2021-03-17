@@ -1,0 +1,114 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 21
+#define MAXVAL 1000000001
+#define INF 1000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+int n, k;
+char a[MAXN][MAXN];
+///each node will have 2 points, direction ,and total cost
+struct stuff{
+    int x1, y1, x2, y2, dir, t;
+};
+///this visited, is basically a larger grid for bfs. we are including both points and direction
+int  visited[21][21][21][21][4];
+///I had an error since starting direction was not right. points are in clockwise orientation
+int dx[4] = {-1, 0, 1, 0};
+int dy[4] = {0,   1, 0, -1};
+///if turn location hasnt been seen before, do that
+bool valid(stuff v)
+{
+    if(visited[v.x1][v.y1][v.x2][v.y2][v.dir] == -1){
+        return true;
+    }
+    return false;
+}
+///change to 1
+bool fillvisited(stuff v)
+{
+    visited[v.x1][v.y1][v.x2][v.y2][v.dir] = 1;
+}
+///if value is inside and is e , 
+bool ise(int x,int y)
+{
+    if(x>=0 && y>=0 && x<n && y<n){
+        if(a[x][y] =='E' )return true;
+    }
+    return false;
+}
+int main() {
+    freopen("cownav.in","r",stdin);
+    freopen("cownav.out","w",stdout);
+    ///input grid
+    cin>>n;
+    for(int i = 0;i<n;i++){
+        string x;
+        cin>>x;
+        lp(j,n ){
+            a[i][j] = x[j];
+        }
+    }
+    memset(visited, -1 ,sizeof(visited));
+    queue<stuff>q;
+    ///starting location
+    q.push({n-1, 0, n-1, 0});
+    while(!q.empty()){
+        stuff v = q.front();
+        q.pop();
+        stuff nv = v;
+        bool fin1, fin2;
+        fin1 = fin2 = false;
+        ///if both are end you are done
+        if(v.x1 == 0 && v.y1 == n-1) fin1  =true;
+        if(v.x2 == 0 && v.y2 == n-1) fin2 = true;
+        if(fin1 && fin2){
+            cout<<v.t;
+            return 0;
+        }
+        ///clockwise
+        nv =v;
+        nv.dir = (v.dir +1)%4;
+        nv.t+=1;
+        if(valid(nv)){
+            fillvisited(nv);
+            q.push(nv);
+        }
+        ///counterclockwise
+        nv = v;
+        nv.dir = (v.dir - 1) == -1? 3 :(v.dir -1);
+        nv.t+=1;
+        if(valid(nv)){
+            fillvisited(nv);
+            q.push(nv);
+        }
+        ///forward; If unable to go there, ignore for this step
+        nv = v;
+        if(ise(nv.x1  + dx[nv.dir], nv.y1 + dy[nv.dir]) && !fin1){
+            nv.x1 += dx[nv.dir];
+            nv.y1 += dy[nv.dir];
+        }
+        if(ise(nv.x2  +dx[(nv.dir +1)%4],nv.y2  +dy[(nv.dir+1)%4]) && !fin2){
+           nv.x2 += dx[(nv.dir +1)%4];
+           nv.y2 +=dy[(nv.dir+1)%4];
+        }
+        nv.t++;
+        if(valid(nv)){
+            fillvisited(nv);
+            q.push(nv);
+        }
+    }
+    cout<<-1<<endl;
+    return 0;
+
+}
+
