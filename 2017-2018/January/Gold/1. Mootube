@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 21
+#define MAXVAL 1000000001
+#define INF 1000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>=
+int n, k;
+bool cmp( pair<int, pair<int,int>> a, pair<int,pair<int,int>> b)
+{
+    return a.f  > b.f;
+}
+struct unionfind{
+    vector<int>e;
+    void init(int n) { e = vector<int> (n, -1);}
+    int get(int x) { return e[x]<0 ? x:e[x] = get(e[x]);}
+    bool sameset(int x, int y) {return get(x) == get(y);}
+    int size(int x) {return -e[get(x)];}
+    bool combine (int x, int y){
+        x = get(x), y = get(y);
+        if(x==y) return false;
+        if(e[x] > e[y]) swap(x,y);
+        ///trick below allows us to have 1 array for dsu
+        ///each connected node is positive, which points to its parent
+        ///the final parent of a node contains the size, where we keep as negative for organization
+        e[x] += e[y];
+        e[y] = x;
+        return true;
+    }
+};
+int main() {
+    freopen("mootube.in","r",stdin);
+    freopen("mootube.out","w",stdout);
+    vector<pair<int,pair<int,int>>> adj;
+    vector<pair<int, pair<int,int>>> query;
+    cin>>n>>k;
+    lp(i,n-1){
+        int p,q,r;
+        cin>>p>>q>>r;
+        p--, q--;
+        adj.pb({r, {p,q}});
+    }
+    lp(i, k){
+        int k ,v;
+        cin>>k>>v;
+        v--;
+        query.pb({k, {v, i}});
+    }
+    vector<int> ans(k);
+    sort(adj.begin(), adj.end(), cmp);
+    sort(query.begin(), query.end(), cmp);
+    unionfind d;
+    d.init(n);
+    int idx  =0;
+    for(auto q:query){
+        int v = q.s.f;
+        int ck = q.f;
+        while(idx< adj.size() && adj[idx].f>=ck){
+            d.combine(adj[idx].s.f, adj[idx].s.s);
+            idx++;
+        }
+        ans[q.s.s] = d.size(v) - 1;
+    }
+    for(auto x:ans){
+        cout<<x<<endl;
+    }
+}
