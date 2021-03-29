@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+lli n, k;
+vector<string> spot;
+vector<string> nospot;
+/// complexity: O(nkLogk) ~ 500^2 * 5 = 1,250,000 fast enough
+///Binary search to check if there is at least 1 casue where it works. we want to find last case where all fails
+bool check(int len) 
+{
+    for(int i = 0; i  +len <= k; i++){
+        set<string>a;
+        for(int j = 0;j < n;j++){
+            a.insert(spot[j].substr(i, len));
+        }
+        bool notdistinct = false;
+        for(int j = 0; j<n; j++){
+            if ( a.find(nospot[j].substr(i, len)) != a.end())notdistinct = true;
+        }
+        if(!notdistinct)return false;
+    }
+    return true;
+}
+int main() {
+    freopen("cownomics.in","r",stdin);
+    freopen("cownomics.out","w",stdout);
+    cin>>n>>k;
+    lp(i,n){
+        string x;
+        cin>>x;
+        spot.pb(x);
+    }
+    lp(i, n){
+        string x;
+        cin>>x;
+        nospot.pb(x);
+    }
+    int left =1;
+    int right = k;
+    int ans = -1;
+    while( left<= right){
+        int mid = (left +right) /2;
+        if(check(mid)){ ///when does not produce unique sequence
+            left = mid+1;
+            ans = mid;
+        }
+        else{
+            right = mid -1;
+        }
+    }
+    ///ans + 1 since ans = last case that fails, so +1
+    cout<<ans +1;
+
+
+
+
+
+}
