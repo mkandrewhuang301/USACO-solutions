@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int main() {
+    freopen("art2.in","r",stdin);
+    freopen("art2.out","w",stdout);
+    //freopen("D://2.in","r",stdin);
+    lli n;
+    cin>>n;
+    vector<int> a(n+2);
+    vector<int> start(n+2, 100000);
+    vector<int> end(n+2);
+    a[0] = a[n+1]  = 0;
+    loop(i,0, n+1){
+        if(i != 0 && i != n+1){
+            int x;
+            cin>>x;
+            a[i] = x;
+        }
+        start[a[i]] = min(i, start[a[i]]);
+        end[a[i]] = max(i, start[a[i]]);
+    }
+    int ans  =0;
+    vector<int> stack;
+    loop(i, 0, n+1){
+        int c = a[i];
+        if(i == start[c]){
+            stack.pb(c);
+            ans = max( ans, (int)stack.size());
+        }
+        if(*stack.rbegin() != a[i]){
+            cout<<-1;
+             return 0;
+        }
+        if( i == end[a[i]]){
+            stack.pop_back();
+        }
+    }
+    cout<<ans -1<<endl;
+}
