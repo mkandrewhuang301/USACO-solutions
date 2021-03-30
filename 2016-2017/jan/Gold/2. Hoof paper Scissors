@@ -31,7 +31,7 @@ int main() {
     int ans = 0;
     vector<vector<vector<int>>> dp (n+1, vector<vector<int>> (k+2, vector<int> (3, 0) ));
     for(int i  = 1; i<=n; i++){
-        for(int j  =1;j<=k+1;j++){
+        for(int j  =1;j<=k+1;j++){   ///k+1 since there is k swaps in between 1 and k+1
             int add = check(hoof, i);
             dp[i][j][hoof] = max(dp[i-1][j][hoof]  +add, max(dp[i-1][j-1][paper] + add, dp[i-1][j-1][scissor]  +add));
 
