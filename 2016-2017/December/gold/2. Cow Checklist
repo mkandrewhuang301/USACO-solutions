@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+lli n, k;
+vector<string> spot;
+vector<string> nospot;
+/// complexity: O(nkLogk) ~ 500^2 * 5 = 1,250,000 fast enough
+///Binary search to check if there is at least 1 casue where it works. we want to find last case where all fails
+int dist(pair<int,int>a, pair<int,int> b)
+{
+    return pow(a.f - b.f ,2)  +pow(a.s - b.s,2);
+}
+int main() {
+   freopen("checklist.in","r",stdin);
+   freopen("checklist.out","w",stdout);
+
+   int h, g;
+   cin>>h>>g;
+   vector<pair<int,int>>hpt;
+   vector<pair<int,int>> gpt;
+   lp(i, h){
+     int f,s;
+     cin>>f>>s;
+     hpt.pb({f,s});
+   }
+   lp(i, g){
+    int f,s;
+    cin>>f>>s;
+    gpt.pb({f,s});
+   }
+   ///have dp[i][j][k], with k being ending on a h or ending on a g. that way can account for both
+   vector<vector<vector<int>>> dp(h+1, vector<vector<int>> (g+1,vector<int> (2, INF)));
+   dp[1][0][0] = 0;
+   ///I and J bounds are 0 to g/h ,since if we restrict to h-1 and g-1, then it will only compute
+   ///1 full h or j, and other is g-1, h-1
+   lp(i,h+1){   
+      lp(j,g+1){
+        lp(k,2){
+            ///since when k ==0 pt is hpt -1, we want to prevent out of bounds
+           if(k == 0 && i == 0) continue;
+           ///since when k ==1 and pt = gpt -1, we want to prevent out of bounds
+           if(k == 1 && j == 0) continue;
+           pair<int,int> pt;
+           if(k==0) pt = hpt[i-1];
+           if(k==1) pt= gpt[j-1];
+           ///dont consider when i ==h since then dp would be out of bounds
+           ///for both k values, go to a h cow (either previous hpt or previous gpt
+           if(i<h){
+             dp[i+1][j][0] = min( dp[i+1][j][0], dp[i][j][k]  +dist(pt, hpt[i]));
+           }
+           ///same thing here, dp would be out of bounds when j ==g
+           if(j<g){
+              dp[i][j+1][1] = min(dp[i][j+1][1], dp[i][j][k] + dist( pt, gpt[j]));
+           }
+        }
+      }
+   }
+   cout<<dp[h][g][0] <<endl;;
+}
