@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int main() {
+ freopen("taming.in","r", stdin);
+ freopen("taming.out","w", stdout);
+ int n;
+ cin>>n;
+   int a[MAXN];
+   lp(i, n){
+      cin>>a[i];
+   }
+   ///dp[i][j][k]; [index][last breakout][num breakouts];
+   vector<vector<vector<int>>> dp (n+1, vector<vector<int>> (n+1, vector<int> (n+1, INF)));
+   dp[0][0][1] = (a[0] == 0? 0:1);
+   for(int i =1; i<n; i++){ ///index of a[i];
+      for(int j = 0; j<=i; j++){     ///all possible last breakout points
+        for(int k = 1; k<=i+1; k++){ /// number of breakout points. k <=i+1 and can be i+1 since indexed at 0, its possible for 2 swaps at index 1
+            if (j<i) dp[i][j][k] = dp[i-1][j][k]; ///if last breakout not current positoin, then just get previous state
+            else{ ///when j ==i , last breakout could be anywhere. So find the best possible breakout point
+                for(int j1 = 0; j1<i; j1++){
+                     dp[i][j][k] = min(dp[i][j][k], dp[i-1][j1][k-1]);
+                }
+            }
+            if(a[i] != i-j)dp[i][j][k]++;   ///if the current value does equal the counter, then add 1
+        }
+      }
+   }
+   loop(k ,1, n){
+    ///loop through all last breakout point for total of k swaps to get the minimum and output
+    int low = INF;
+    lp (j ,n)low = min(low, dp[n-1][j][k]);
+        cout<<low<<endl;
+   }
+}
