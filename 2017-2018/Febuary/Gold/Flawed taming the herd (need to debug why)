@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+int main() {
+ freopen("taming.in","r", stdin);
+ freopen("taming.out","w", stdout);
+ int n;
+ cin>>n;
+   int a[MAXN];
+   lp(i, n){
+      cin>>a[i];
+   }
+   ///coutner and num deviate
+   vector<vector<vector<pair<int,int>>>> dp (n+1, vector<vector<pair<int,int>>> (n+1, vector<pair<int,int>> (n+1, {INF, INF})));
+   loop(i, 1, n){ ///for each possible number of breakouts
+        dp[i][0][1] = {0,0};   ///first day is 0, and guaranteed
+        if(0 != a[0]) dp[i][0][1].s = 1; ///if scoreboard not 0, deviate  =1;
+        for(int day = 1; day<n; day++){ //iterate through days (not including first since we already did that
+            for(int curbreak =1; curbreak<=i; curbreak++){ ///error when only 1 break. idk if curbreak should be <i or <=i
+                ///we test setting the counter to 0
+                int append = (0 == a[day]? 0:1);///If zero not on the scoreboard, add 1
+                if(dp[i][day-1][curbreak].s  +  append < dp[i][day][curbreak+1].s){///if yesterday minimum plus factor changing to zer is less than today with 1 more break, update
+                    dp[i][day][curbreak+1].s = dp[i][day-1][curbreak].s  +  append ;
+                    dp[i][day][curbreak+1].f = 0;
+                }
+                ///no change in breaks
+                append = (a[day] == dp[i][day-1][curbreak].f +1 ? 0:1);
+                if(dp[i][day-1][curbreak].s  + append <  dp[i][day][curbreak].s){
+                    dp[i][day][curbreak].s  = dp[i][day-1][curbreak].s  +append;
+                    dp[i][day][curbreak].f = dp[i][day-1][curbreak].f+1;
+                }
+            }
+        }
+        cout<<dp[i][n-1][i].s<<endl;;
+
+   }
+}
