@@ -1,0 +1,81 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+///The main insight is that we can do this offline. we only need to sort the largest shoes and snows
+///then find whether the gap between the ones that shoe cannot cross is larger than the amount the shoe can go
+int n, b;
+   int depth[MAXN];
+   int order[MAXN];
+      pair<int,int> shoes[MAXN];
+   int shoeorder[MAXN];
+bool cmp(int a, int b)
+{
+    return depth[a] < depth[b];
+}
+bool scmp( int a, int b)
+{
+    return shoes[a].f  < shoes[b].f;
+}
+
+int main() {
+ freopen("snowboots.in", "r", stdin);
+ freopen("snowboots.out","w",stdout);
+   cin>>n>>b;
+   ///depth[i] = order of the list
+   ///order[i], once sorted, allows us to sort the order from small to large 
+   lp(i, n){
+       cin>>depth[i];
+       order[i] = i;
+   }
+   ///Input the shoe types
+   ///similar to the process done to depth, we sort the shoes from largest to smallest
+   lp( i,b){
+      int snow, distance;
+      cin>>snow>>distance;
+      shoes[i] = {snow, distance};
+      shoeorder[i] = i;
+   }
+   ///sort by increasing depth of snow
+   sort(order, order+n, cmp);
+   sort(shoeorder, shoeorder + b, scmp);
+   int next[MAXN]; int previous[MAXN];
+   ///this will be what we will use to figure out the distance between two points
+   ///easy to compute and less hassle than actually deleting the values and lets us keep track
+   for(int i = 0; i<n; i++){
+       next[i] = i+1;
+       previous[i] = i -1;
+   }
+   int ans[MAXN];
+   int j = n-1;
+   int maxstep = 1;
+   ///since two pointers, have one for loop and another while loop
+   for(int i =b-1; i>=0; i--){
+     int boot = shoeorder[i]; ///the # of boot that is used
+     while(j>=0 && depth[order[j]] > shoes[boot].f){ ///we cant let j go out of index and want the depth 
+        
+        int curspot = order[j];///this is the current snow location
+        ///the next and previous is basically saying that once removed, the next of the left adjacent block points to the next of block removed
+        ///same goes for the prev. it says the previous of right adjacent is just prev of the block removed
+        next[previous[curspot]] = next[curspot];
+        previous[next[curspot]] = previous[curspot];
+        maxstep = max(maxstep, next[curspot] - previous[curspot]); ///find the largest gap in all the grid
+        ///Since maxstep will only increase as time goes on, we can do this
+        j--;
+     }
+     ans[boot] = (maxstep <= shoes[boot].s);
+   }
+   lp (i, b){
+   cout<<ans[i]<<endl;
+   }
+
+
+
+}
