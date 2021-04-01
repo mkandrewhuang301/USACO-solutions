@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+typedef vector<int> vi;
+typedef pair<int,int> pii;
+bool isfile[MAXN];
+lli namelength[MAXN];
+vi child[MAXN];
+int filecnt = 0;
+lli length[MAXN];
+vi numfiles(MAXN+1, -1);
+lli ans  =0;
+lli dfslength(int node, lli pathlength) ///Get original path length from root to any leaf
+{
+    length[node]  = pathlength  +namelength[node];
+    for(auto it: child[node])dfslength(it, length[node]);
+}
+int dfsfiles(int node)
+{
+    if(isfile[node])return 1;
+    if(numfiles[node] != -1) return numfiles[node];
+    int cnt = 0;
+    for(int it: child[node]){
+        cnt+= dfsfiles(it);
+    }
+    return numfiles[node] = cnt;
+}
+void dfs(int node, lli plength)
+{
+    ans = min(ans, plength);
+    for(int it: child[node]){
+        ///newlength = old length - name times number of files in subtree (since all have the "name/") + 3* number files not in subtree since all files have "../"
+        lli newlength = plength - namelength[it]*numfiles[it] + 3*(filecnt - numfiles[it]);
+        dfs(it, newlength);
+    }
+}
+int main() {
+ freopen("dirtraverse.in","r", stdin);
+ freopen("dirtraverse.out","w", stdout);
+ int n;
+ cin>>n;
+ lp(i,n){
+    string name; int nchild; cin>>name>>nchild;
+    namelength[i] = name.length();
+    lp(j, nchild){
+        int node; cin>>node;
+        node--;
+        child[i].pb(node); ///add to children
+    }
+    isfile[i] = nchild ==0;///if children count == 0, then i is file
+    if(isfile[i])filecnt++; ///get total files for later calculation
+    if(!isfile[i]) namelength[i]++;///slash
+ }
+ assert(isfile[0] == false); ///since first is not a file but afolder
+ namelength[0] = 0;  ///root not included, so set to 0
+ dfslength(0, 0);
+ lli oplength = 0;
+ lp(i,n) {
+    if(isfile[i]) oplength+=length[i];   ///get base path lenght of root
+ }
+ ans = oplength;
+ dfsfiles(0);    ///find number of files per node. Used for final dfs calculation
+ dfs(0, oplength); ///recurse through all possible folders to find best
+ cout<<ans<<endl;
+
+}
