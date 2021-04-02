@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 1000001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#define nhalf 25000
+typedef vector<int> vi;
+typedef pair<int,int> pii;
+typedef vector<pair<int,int>> vpii;
+int n,m, k;
+int a[MAXN];
+vi flavor[1000001];
+bitset<50000> adj[nhalf];
+lli ans  =0;
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+   freopen("cowpatibility.in","r",stdin);
+   freopen("cowpatibility.out","w",stdout);
+   cin>>n;
+   lp(i,n){
+    lp(j,5){
+        int x;
+        cin>>x;
+        flavor[x].pb(i);
+    }
+   }
+   loop(i, 1, 1000000)if(flavor[i].size()>0){
+    bitset<50000>b;
+    for(int it: flavor[i])b[it] = 1;
+    for(int it:flavor[i])if(it<nhalf) adj[it] |=b;
+   }
+   lp(i,nhalf) ans+= adj[i].count(); // +(adj[i].count() >0? -1:0);  not needed since makes code slow
+   
+   
+   ///divide into two since worst case 500000. Adjacency matrix would be too big. so we split into two halves and essentially do the same thing
+   lp(i, nhalf) adj[i].reset();
+   loop(i,1, 1000000) if(flavor[i].size() > 0){
+    bitset<50000>b;
+    for(int it: flavor[i]) b[it] = 1;
+    for(int it: flavor[i]) if(it>=nhalf) adj[it - nhalf]|=b;
+   }
+   lp(i, nhalf) ans+=adj[i].count();//+(adj[i].count() >0? -1:0); not needed since makes code slow
+   ///if we used the commented code, total subset is just n* n-1 and then we subtract ans
+   cout<<((lli)n*(n) - ans)/2<<endl;
+   return 0;
+
+}
