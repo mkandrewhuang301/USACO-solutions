@@ -1,0 +1,71 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 500002
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+typedef vector<int> vi;
+typedef pair<int,int> pii;
+typedef vector<pair<int,int>> vpii;
+int n,m, k;
+vpii adj[MAXN];
+vector<int> dist(MAXN, INF );
+void minimize(int loc)
+{
+    dist[loc] = 0;
+    priority_queue<pair<int,int>> q;
+    q.push({0, loc});
+    bool processed[MAXN];
+    while(!q.empty()){
+        int a = q.top().second; q.pop();
+        if(processed[a])continue;
+        for(auto u: adj[a]){
+            int b =u.f;
+            int w = u.s;
+            if(dist[a]  +w < dist[b]){
+                dist[b] = dist[a]  +w;
+                q.push({-dist[b], b});
+            }
+        }
+    }
+}
+int main() {
+ freopen("dining.in","r",stdin);
+ freopen("dining.out","w",stdout);
+ cin>>n>>m>>k;
+ ///input adj points
+ lp(i, m){
+    int a,b,t;
+    cin>>a>>b>>t;
+    a--, b--;
+    adj[a].pb({b,t});
+    adj[b].pb({a,t});
+ }
+ ///do 1 round to find original min points
+ minimize(n-1);
+ ///add new node n, (indexed at 0 so is considered new)
+ ///make unidirectional to prevent cycling
+/// weight is distance from node to end - val
+ lp(i, k){
+    int v, val;
+    cin>>v>>val;
+    v--;
+    adj[n].pb({v, dist[v] - val});
+ }
+ vector<int> odist = dist;
+  fill(dist.begin(), dist.end(), INF);
+  ///second round of djikstras
+ minimize(n);
+ ///if new is less or equal to old, then it works
+ lp(i, n-1){
+    cout<<(dist[i] <= odist[i])<<endl;
+ }
+
+
+
+}
