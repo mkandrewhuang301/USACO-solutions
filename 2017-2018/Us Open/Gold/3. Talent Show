@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+typedef vector<int> vi;
+typedef pair<int,int> pii;
+typedef vector<pair<int,int>> vpii;
+int n,w;
+pii cow[MAXN];
+int main() {
+ freopen("talent.in","r",stdin);
+ freopen("talent.out","w",stdout);
+ cin>>n>>w;
+ lp(i,n){
+    int we,t;
+    cin>>we>>t;
+    cow[i] = {we,t};
+ }
+ vector<int> dp(250001, INF);
+ dp[0] =0;
+ lp(item, n){
+    int weight = cow[item].f;
+    int val = cow[item].s;
+    for(int i=  250001; i>=val; i--)dp[i] = min(dp[i], dp[i-val] + weight);
+ }
+ double ans  =0;
+ for(int i = 250000; i>=0; i--){
+        if(dp[i] >=w) ans = max(ans,((double)i*1000.0/ (dp[i])));
+ }
+ cout<<(int)ans<<endl;
+
+}
