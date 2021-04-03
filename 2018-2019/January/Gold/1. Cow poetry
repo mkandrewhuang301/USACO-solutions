@@ -1,0 +1,91 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 5001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#define nhalf 25000
+typedef vector<int> vi;
+typedef pair<int,int> pii;
+typedef vector<pair<int,int>> vpii;
+int n,m,k;
+map<int, vi> len;     ////stores lengths that end with rhyme s;
+lli nrhyme[MAXN] = {0}; ////number of ways to make value with rhyme i
+lli ways[MAXN];
+int e[26];
+///fast exponenation
+long long pp(int base, int power){
+   if(power == 0) return 1;
+   if(power == 1) return (base + mod) % mod;
+   long long ans = pp(base,power/2);
+   ans = (ans * ans + mod) % mod;
+   if(power%2 == 1) ans = (ans*base + mod) % mod;
+   return (ans + mod) % mod;
+}
+int main() {
+  freopen("poetry.in","r",stdin);
+  freopen("poetry.out","w",stdout);
+  ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+  cin>>n>>m>>k;
+  ///input points
+  lp(i,n){
+    int s,c;
+    cin>>s>>c;
+    ///used a map to store lengths, and the possible endings for that length
+    if(len.find(s) == len.end()){
+        len.insert({s, {c}});
+    }
+    else{
+        auto it = len.find(s);
+        it->second.pb(c);
+    }
+  }
+  ///dp for number of ways
+  ways[0] = 1;
+  for(int x = 1; x<=k; x++){ ///dp number of ways to make k from those values
+    for(auto c: len){
+        if(x- c.f >=0) { ///c.f = number of syllables
+        ///!!!!!! times c.size since for that value, we could use any of the lenght n words
+            ways[x]+=ways[x-c.f]*c.s.size()%mod;
+            ways[x] %= mod;
+            ///when x == k ,add the number of ways for the rhyme type
+            if(x == k){
+                for(auto it: c.s){
+                    nrhyme[it] += ways[x-c.f];
+                    nrhyme[it]%=mod;
+                }
+            }
+        }
+    }
+  }
+  vi ans;
+  lp(i, MAXN){
+    if(nrhyme[i] != 0)ans.pb(nrhyme[i]); ///remove all the zeros and no useless loops
+  }
+  ///add # of occurences of each letter
+  lp(i, m){
+    char x;
+    cin>>x;
+    e[x - 'A']++;
+  }
+  lli res  =1;
+  lp(i, 26){
+      if(e[i] == 0) continue;//cout<<e[i]<< "  ";
+     int mult = 0;
+     for(auto it: ans){
+        mult+= pp(it, e[i]);
+        mult%=mod;
+     }
+     res*=mult;
+     res%=mod;
+  }
+  cout<<res%mod<<endl;
+  return 0;
+
+}
