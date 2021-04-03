@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 1000001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#define nhalf 25000
+typedef vector<int> vi;
+typedef pair<int,int> pii;
+typedef vector<pair<int,int>> vpii;
+int n,k;
+int a[MAXN];
+vector<int> dp (n+1, 0);
+int main() {
+  freopen("teamwork.in","r",stdin);
+  freopen("teamwork.out","w",stdout);
+  cin>>n>>k;
+  loop(i,1,  n){
+    cin>>a[i];
+  }
+  dp[0] = 0;
+  loop(i,1, n){
+    dp[i] = dp[i-1]  +a[i];
+    int large = 0;
+    for(int len  =1; len<=k; len++){
+        if(i - len <0)break;
+        large = max(large, a[i -len +1]);
+        dp[i] = max(dp[i], dp[i-len] +large*len );
+    }
+  }
+  cout<<dp[n]<<endl;
+
+}
