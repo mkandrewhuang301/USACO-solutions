@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 10005
+#define INF LONG_MAX
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#define nhalf 25000
+typedef vector<lli> vi;
+typedef pair<lli,lli> pii;
+typedef vector<pair<lli,lli>> vpii;
+lli n, m,t;
+lli numcow[MAXN];
+vpii adj[MAXN];
+vi dist(MAXN, INF);
+vi par (MAXN, -1);
+vector<vector<lli>> spadj(MAXN);
+lli nums[MAXN];
+///find number of cows pass each location
+void dfs(int v, int p)
+{
+    lli sum = numcow[v];
+    for(auto next  : spadj[v]){
+        if(next == p) continue;
+        dfs(next, v);
+        sum+= nums[next];
+    }
+    nums[v]  = sum;
+}
+///Dijkstras
+void minimize(int loc)
+{
+    dist[loc] = 0;
+    priority_queue<pii> q;
+    q.push({0, 1});
+    vector<bool> seen(MAXN, false);
+    while(!q.empty()){
+        lli a = q.top().s; q.pop();
+        //cout<<"aval "<<a<<"  "<<q.size()<<endl;
+        if(seen[a]) continue;
+        seen[a] = true;;
+        for(auto u: adj[a]){
+            lli b = u.f; ///new adj
+            lli w = u.s; ///weight
+            if(dist[a] + w  < dist[b]){
+                dist[b] = dist[a] + w;
+                par[b] = a;
+                q.push({-dist[b], b});
+                //cout<<"aval "<<a<<endl;
+            }
+            else if (dist[a] + w == dist[b]){
+                if( a<par[b]){
+                    dist[b] = dist[a] + w;
+                    par[b]  = a;
+                    q.push({-dist[b] ,b});
+                }
+            }
+        }
+    }
+}
+int main() {
+  freopen("shortcut.in","r",stdin);
+  freopen("shortcut.out","w",stdout);
+  cin>>n>>m>>t;
+  loop(i,1, n)cin>>numcow[i]; ///get number of cows at location
+  ///standarddijkstras 
+  lp(i, m){
+    lli a, b,t;
+    cin>>a>>b>>t;
+    adj[a].pb({b,t});
+    adj[b].pb({a,t});
+  }
+   minimize(1);
+   
+   
+  ///add adjacent nodes in spanning tree 
+  ///we start from 2 since node 1 does not have a parent
+  loop(i ,2, n) {
+     spadj[i].pb(par[i]);
+     spadj[par[i]].pb(i);
+  }
+  ///dfs to find number of cows passing each node
+  dfs(1, -1);
+  lli ans  =0;
+  ///loop through to find best location to put shortcut
+  loop(i, 1, n){
+    ans = max(ans, nums[i]*(dist[i] -t));
+  }
+  cout<<ans<<endl;
+
+
+}
