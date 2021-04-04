@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#define nhalf 25000
+typedef vector<int> vi;
+typedef pair<int,int> pii;
+typedef vector<pair<int,int>> vpii;
+
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+int n;
+int b[MAXN];
+vi a(MAXN, 0);
+bool sorted[MAXN];
+int main() {
+  freopen("sleepy.in","r",stdin);
+  freopen("sleepy.out","w",stdout);
+  cin>>n;
+  loop(i,1,n)cin>>a[i];
+  sorted[n] = true;
+  bool order =true;
+  int ans = -1;
+  ordered_set good; good.insert(a[n]);
+  for(int i= n-1; i>=1; i--){
+     if(a[i] > a[i+1]) {
+            order = false;
+            ans = i;
+            break; ///Bruh im stupid. I did forgot this break since we dont want it to keep getting new end points until the first unsort
+     }
+     sorted[i] = order;
+     if(order)good.insert(a[i]);
+  }
+  if(ans == -1){
+    cout<<0;
+    return 0;
+  }
+  cout<<ans<<endl;
+  for(int i = 1; i<=ans; i++){
+       int pos =  good.order_of_key(a[i]);
+       cout<<pos + ans -i<<(i ==ans? "\n":" ");
+       good.insert(a[i]);
+  }
+}
