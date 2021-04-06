@@ -1,0 +1,102 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 200001
+#define INF 2000000000
+#define mod 1000000007
+#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+typedef vector<int> vi;
+typedef pair<int,int> pii;
+typedef vector<pair<int,int>> vpii;
+struct node
+{
+    int c;
+    int portal[4];
+    int comp1 = -1;
+    int comp2 = -1;
+};
+unordered_map<int, vector<int>> pedge; /// connects the two nodes with same portal
+int n;
+bool cmp(node a, node b)
+{
+    return a.c < b.c;
+}
+  vector<node> graph;
+void floodfill(int pos, int mark, int which)
+{
+
+    switch (which){
+       case 0:
+            graph[pos].comp1 = mark;
+            break;
+       case 2:
+            graph[pos].comp2 = mark;
+            break;
+    }
+   // if(which ==0) graph[pos].comp1 = mark; ///not all first/second;
+    //else graph[pos].comp2 = mark;
+    lp(i, 2){
+       for(int next: pedge.find(graph[pos].portal[i +which])->second){
+            if(next == pos)continue;
+          int whichcomp;
+          lp(j,4) if(graph[next].portal[j] ==graph[pos].portal[i +which]) whichcomp  =j;
+          if(whichcomp <2) whichcomp = 0;
+          else whichcomp =  2;
+          if(whichcomp == 0 && graph[next].comp1 == -1) floodfill(next, mark, whichcomp);
+          if(whichcomp ==2 && graph[next].comp2 == -1) floodfill(next, mark, whichcomp);
+       }
+    }
+}
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
+  cin>>n;
+  lp(i,n){
+    node temp;
+    cin>>temp.c;
+    lp(j ,4){
+        cin>>temp.portal[j];
+    }
+    ///make edge of finished nodes
+    graph.pb(temp);
+    lp(j ,4){
+        if(pedge.find(temp.portal[j]) == pedge.end()) {
+            pedge.insert({temp.portal[j], {i}});
+        }
+        else{
+            pedge.find(temp.portal[j])->second.pb(i);
+        }
+    }
+  }
+  int comp  = 0;
+  for(int i  =0;i<graph.size();i++)
+  {
+      if(graph[i].comp1 == -1) {floodfill(i, comp, 0);comp++;} ///have 1 and 2 to know which pair i am floodfilling
+      if(graph[i].comp2 == -1) {floodfill(i, comp, 2);comp++;}///start at either 0 or 2
+  }
+  sort(graph.begin(), graph.end(), cmp);
+  int ans = 0;
+  int link[MAXN];
+  int size[MAXN];
+  lp(i, comp) {link[i] = i;size[i] = 1;}
+  for(auto it: graph){
+      int first = it.comp1;
+      while (first != link[first]) first = link[first];
+      int second = it.comp2;
+      while (second != link[second]) second = link[second];
+      if(first!= second){
+        if(size[first] <size[second])swap(first, second);
+        ans+= it.c;
+      size[first]+= size[second];
+        link[second] = first;
+      }
+  }
+  printf("%d\n",ans);
+  return 0;
+
+
+}
