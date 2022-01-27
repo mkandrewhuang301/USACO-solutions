@@ -1,72 +1,58 @@
 #include <bits/stdc++.h>
-#include<string>
 using namespace std;
-#define MAXN 100001
 #define lli long long int
-lli n;
 #define f first
 #define s second
-vector<lli> a;
-int rooms[MAXN];
-lli ans = 0;
-bool start(int pos)
-{
-    int total = 0;
-    int i = pos;
-    do{
-        total+=a[i];
-        total--;
-        if(total<0) return false;
-        i++;
-        i%= n;
-    }while(i!=pos);
-    return true;
-}
-lli move(int pos)
-{
+#define pb push_back
+#define MAXN 2000005
+#define INF 2e9  + 5
+#define mod 1000000007
+#define loop(i,a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define print(a) cout<<a<<" ";
+#define printl(a) cout<<a<<endl;
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(int i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+    insight is that given  it is always best to drop off the cow that has been walking the longest since distance is squared
+    so start from largest number of cows using the largest subsequence formula and get largest sequence. 
+    then after one loop, you have already a prefix value. Continue another loop until you hit zero (at which cycle ends)
+    shift +1 from that point and then collect and drop off cows at different rooms
+*/
 
-    for(int i  = pos;i<n;i++){
-        int sum = a[i];
-        int loc = i;
-        while(sum>0){
-            while(rooms[loc%n] == 1)loc++;
-            rooms[loc%n] = 1;
-            ans+= pow(loc - i, 2);
-            sum--;
-        }
-    }
-    for(int i  =0; i<pos;i++){
-        int sum = a[i];
-        int loc = i;
-        while(sum>0){
-            while(rooms[loc%n] == 1)loc++;
-            rooms[loc%n] = 1;
-            ans+= pow(loc - i, 2);
-            sum--;
-        }
-    }
-}
+vector<int> barn;
 int main()
 {
-    freopen("cbarn.in","r",stdin);
-    freopen("cbarn.out","w",stdout);
+   freopen("cbarn.in","r", stdin);
+   freopen("cbarn.out","w",stdout);
+   int n;
    cin>>n;
-   for(int i  =0;i<n;i++){
-        int x;
-        cin>>x;
-        a.push_back(x);
-        //a[i].s = 0;
+   lp(i,n) {
+     int x;
+     cin>>x;
+     barn.pb(x);
    }
-   int stpt;
-   for(int i  =0;i<n;i++){
-        if(start(i)){
-            stpt = i;
-            break;
-        }
+   int mx = 0 ;
+   //get best cow sequence
+   lp(i,n){
+     mx = max(0, mx -1  + barn[i]); //
    }
-   move(stpt);
+   lp(i,n){
+     if( mx == 0 ) {
+        rotate(barn.begin(), barn.begin()  +i, barn.end());
+        break;
+     }
+     mx = max(0, mx -1 + barn[i]);
+   }
+   lli ans = 0 ;
+   queue<lli> q;
+   lp(i,n){
+       lp(j , barn[i]) q.push(i);
+       lli v = q.front(); q.pop();
+       ans += (i - v) *(i - v);
+   }
    cout<<ans<<endl;
-   return 0;
-
 
 }
