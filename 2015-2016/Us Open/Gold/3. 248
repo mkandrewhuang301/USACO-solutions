@@ -4,36 +4,45 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 289
-#define INF 1000000000000000000
+#define MAXN 2000005
+#define INF 10000000000000005
 #define mod 1000000007
-#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
+#define loop(i,a,b) for  (int i=(a); i<= (signed)(b); i++)
 #define lp(i,a) for(int i = 0;i<(signed)(a); i++)
-int n, m;
-int main() {
-    freopen("248.in","r",stdin);
-    freopen("248.out","w",stdout);
-    cin>>n;
-    int a[MAXN];
-    lp(i ,n)cin>>a[i];
-    int dp[MAXN][MAXN];
-    int ans = 0;
-    ///loop through all possible subarray lengths
-    loop(len, 1, n){
-        for(int i = 0;i +len<=n; i++){
-            int j = i+len-1;
-            dp[i][j] = -1;
-            ///get all possible start and end points. If length is 1, then a[i][i]  =1
-            if(len ==1) dp[i][j] = a[i];
-            ///For all intermediate between i and j, if there is a two that work , if you can combine them ,compress the ranges into one value and find the maximum value for that range
-            for(int k = i; k<j; k++){
-                if(dp[i][k] == dp[k+1][j] && dp[i][k]>0){
-                    dp[i][j] = max(dp[i][j], dp[i][k]+1);
-                }
-            }
-            ///Find the maximum in all possible subarrays
-            ans = max(ans, dp[i][j]);
-        }
-    }
-    cout<<ans<<endl;
+#define rev(a) reverse(a.begin(), a.end())
+#define print(a) cout<<a<<" ";
+#define printl(a) cout<<a<<endl;
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(int i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+    dp value, and length
+    if equal, then dp of both is ++
+    note that you want to do len on outer loop because you may will not have all the shorter lengths if length is in second loop
+*/
+
+int n,m;
+int seq[MAXN];
+int dp[250][250]; //<start, length>
+int main()
+{
+   freopen("248.in","r",stdin);
+   freopen("248.out","w",stdout);
+   int n;
+   cin>>n;
+   loop(i,1, n){
+      cin>>seq[i];
+      dp[i][1] = seq[i];
+   }
+   int ans = 0 ;
+   for(int len = 2 ; len  <= n ; len++){
+      for(int i = 1; len  +i  -1 <=n; i++){
+
+         for(int j = 1; j<= len -1; j++){
+             if(dp[i][j] == dp[i + j][len -j] )dp[i][len] = max(dp[i][len], dp[i][j] + 1);
+             ans = max(ans,dp[i][len]);
+         }
+      }
+   }
+   cout<<ans<<endl;
 }
