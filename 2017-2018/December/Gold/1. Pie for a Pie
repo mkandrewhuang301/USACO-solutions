@@ -4,85 +4,89 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 100001
-#define INF 10000000000000
+#define MAXN 200005
+#define INF 2e9  + 5
 #define mod 1000000007
-#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
-#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
-int n,d;
-int a[2*MAXN], b[2*MAXN], dist[2*MAXN];
-struct cmpa
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+   BFS bacwards from sink. Trying to find sink too slow because max 10^6 nodes
+   However, if you start by sinks there are less
+   store value 1 -  n for bessie and n  +1 - 2n for else
+
+*/
+int b[MAXN], e[MAXN], dist[MAXN];
+queue<int>q;
+set<pair<int,int>> bessie, elsie;
+#define score first
+#define pos second
+int main()
 {
-    bool operator()(int f, int s)const
-    {
-        return b[f] < b[s];
-    }
-};
-struct cmpb
-{
-    bool operator()(int f, int s)const
-    {
-        return a[f] < a[s];
-    }
-};
-multiset<int, cmpa> cona;
-multiset<int, cmpb> conb;
-int mx, cur;
-    int  q[2*MAXN];
-int main() {
-   // freopen("piepie.in","r",stdin);
-    //freopen("piepie.out","w", stdout);
+    freopen("piepie.in", "r" ,stdin);
+    freopen("piepie.out","w", stdout);
+    int n, d;
     cin>>n>>d;
-    ///add points
-    //// since backwards , change to negative
-    for(int i = 0;i<2*n;i++){
-        cin>>a[i]>>b[i];
-        a[i] *=-1, b[i]*= -1;
-        dist[i] = -1;
+    lp(i,2*n){
+       cin>>b[i]>>e[i];
     }
-    ///if value is 0, it is a source node (it is the smallest)
-    /// else, add it to the ones to be processed
-    lp(i, n){
-        if(b[i] == 0){
-            dist[i] = 1;
-            q[mx++] = i;
+    for(int i = 0 ; i < 2*n; i++){
+        //say that elsie gives bessie a zero
+        if(i>=n){
+            if(b[i] ==0){
+                dist[i] = 1;// distance is 1 because it needed 1 value to give to bessie
+                q.push(i);
+            }
+            else{
+                dist[i] = INF;
+                elsie.insert({b[i], i}); /// value of pies bessie can get (and deems) + location
+            }
         }
-        else
-            cona.insert(i);
-        if(a[i+n] ==0){
-            dist[i+n] = 1;
-            q[mx++] = n+i;
+        //say that bessie gives elsie a zero
+        else{
+            if(e[i] ==0){
+                dist[i] = 1;
+                q.push(i);
+            }
+            else{
+                dist[i] = INF;
+                bessie.insert({e[i], i});
+            }
         }
-        else
-            conb.insert(n+i);
     }
-    multiset<int, cmpa>:: iterator ita;
-    multiset<int, cmpb>:: iterator itb;
-    ///every time when cur< mx, there is more to be processed
-    while(cur<mx){
-        int i = q[cur];
-        ///get value
-        if(i<n){
-                ///continue doing it if possible to get minimum distance from all vertex from this node
-            while(true){
-                itb = conb.lower_bound(i);
-                if(itb == conb.end() || a[*itb] > a[i] + d)break;
-                dist[*itb] = dist[i] + 1;
-                q[mx++] = *itb;
-                conb.erase(itb);
+    ///bfs  + deleting it every time we see it since since it is the closest value (so not needed)
+    while(!q.empty())
+    {
+        int v = q.front(); q.pop();
+        ///means that elsie gave bessie a value. so we need to find all values that bessie 
+        //to do this, we see the cost of the pie elsie gave (in elsies eyes) and find which pies that bessie has that could have been given and add to bfs
+        if(v >=n){
+            auto it = bessie.lower_bound({e[v] - d, -1});
+            ///either get all values or get until bessie's cake is all larger than what elsie gave
+            while(it != bessie.end() && e[it->pos] <= e[v]){
+                dist[it->pos] = dist[v] + 1;
+                q.push(it->pos);
+                it = bessie.erase(it);
             }
         }
         else{
-            while(true){
-                ita = cona.lower_bound(i);
-                if(ita == cona.end() || b[*ita] > b[i] + d) break;
-                dist[*ita] = dist[i]  +1;
-                q[mx++] = *ita;
-                cona.erase(ita);
+            auto it = elsie.lower_bound({b[v] - d, -1} );
+            while(it != elsie.end() && b[it->pos]<= b[v]){
+                dist[it->pos] = dist[v] + 1;
+                q.push(it->pos);
+                it  = elsie.erase(it);
             }
         }
-        cur++;
     }
-    lp(i,n)cout<<dist[i]<<endl;
+    lp(i,n){
+       if(dist[i] == INF) {
+            cout<<-1<<endl;
+       }
+       else{
+        cout<<dist[i]<<endl;
+       }
+    }
 }
-
