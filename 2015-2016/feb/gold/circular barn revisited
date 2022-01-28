@@ -1,44 +1,51 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define MAXN 101
-#define s second
-#define f first
 #define lli long long int
+#define f first
+#define s second
 #define pb push_back
+#define MAXN 103
+#define INF 2e9  + 5
+#define mod 1000000007
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define print(a) cout<<a<<" ";
+#define printl(a) cout<<a<<endl;
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
 typedef vector<lli> vi;
-typedef vector<pair<lli,lli>> vpii;
-#define lp(i, n)    for(int i = 0; i<n; i++)
-#define INF 2000000000
-//#define mod 1000000007
-int N, K;
-lli rooms[MAXN];
-lli dp[8][MAXN];
-///no good "method", so indicator of using DP
-///idea is to test every ending location of the final door and find the minimum
+/*
+    dp on the door locations
+    dp[numdoors][position of last door]
+    loop n times and roate so all have unqiue ending polli.
+
+*/
+
 int main()
 {
     freopen("cbarn2.in","r", stdin);
-    freopen("cbarn2.out","w", stdout);
-    cin>>N>>K;
-    lp(i, N){
-       cin>>rooms[i];///input num cows needed at each room
-    }
-    lli ans  =INF;
-    lp(_, N){ ///to rotate the whole array so that each possible endpoint gets represented at least once
-        memset(dp, 0x3f, sizeof(dp)); //initally all values are infinity except for 0 doors at n (not in array)
-        dp[0][N] = 0;
-        for(int k = 1; k<=K; k++){   ///test every possible k value
-            for(int i = 0; i<N; i++){ ///test every possible location to put N
-                lli sum =0;   
-                for(int j  =i+ 1; j <=N; j++){    ///gets the previous possibible point
-                    sum+= rooms[j-1] * (j -i -1); ///gets the total distance the cows travel between the two doors. it is distance of and i minus once since j is door
-                    dp[k][i] = min(dp[k][i], sum + dp[k-1][j]); ///get minimum possible value of dp[k][i] with every possible starting j door
-                }
+    freopen("cbarn2.out", "w", stdout);
+   lli n,m;
+   cin>>n>>m;
+   vi  a(n);
+   lp(i,n)cin>>a[i];
+   lli ans  =INF;
+   lli dp[8][MAXN];
+   lp(t, n){
+      memset(dp, 0x3f, sizeof(dp));
+      dp[0][n] = 0;  ///initially with zero doors, dp is zero
+      for(lli numdoor = 1; numdoor <= m; numdoor++){
+        for(lli newdoor = 0; newdoor< n; newdoor++){
+            lli sum = 0 ;
+            for(lli prevdoor = newdoor + 1; prevdoor <=n; prevdoor++){ //have lastdoor at n because could be just 1 door at 0 and all other not needed
+                sum += a[prevdoor-1] * (prevdoor - newdoor -1); /// get distnace needed to move current cows to location
+                dp[numdoor][newdoor] = min(dp[numdoor][newdoor], dp[numdoor -1][prevdoor] + sum);
             }
         }
-        ans = min(ans, dp[K][0]);  //dp for the minimum of using k doors ending at the specified start location
-        rotate(rooms, rooms+1, rooms+N); ///rotate the array
-    }
-    cout<<ans<<endl;  
-
+      }
+      ans = min(ans, dp[m][0]);
+      rotate(a.begin(), a.begin()  +1, a.end());
+   }
+   cout<<ans<<endl;
 }
