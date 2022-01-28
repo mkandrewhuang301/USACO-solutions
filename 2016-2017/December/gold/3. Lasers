@@ -1,0 +1,91 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 100005
+#define INF 2e9  + 5
+#define mod 1000000007
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+   BFS 
+   have map of all regions then traverse
+
+*/
+#define hor 1
+#define vert 0
+struct coord
+{
+    lli x = 0,y = 0;
+};
+struct stuff
+{
+    int x,y ,t, dir;
+};
+map<int, vector<int>> yline, xline;
+map<pair<int,int>, int> pt;
+bool visited[MAXN];
+coord start, fin;
+void bfs(int x,int y)
+{
+    ///find start with left and right direction
+    queue<stuff> q;
+    q.push({x,y,0,hor});
+     q.push({x,y,0,vert});
+    while(!q.empty())
+    {
+        stuff v = q.front(); q.pop();
+        //cout<<v.x<< "  "<<v.y<<endl;
+        if(v.x == fin.x && v.y == fin.y){
+            cout<<v.t -1<<endl;
+            exit(0);
+        }
+        if(visited[pt[{v.x, v.y}]] && (v.x!= x && v.y !=y))continue;
+        visited[pt[{v.x, v.y}]] = true;
+        //cout<<"newpoint"<<v.x<< "  "<<v.y<<(v.dir ==1?" HOR":" VERT")<<endl;
+        if(v.dir == vert){
+            for(auto it: yline[v.x]){
+                if(it == v.y)continue;
+                //cout<<"VERTICAL "<<v.x<< " "<<it<<endl;
+                q.push({v.x, it, v.t +1, hor});
+            }
+        }
+        if(v.dir == hor){
+            for(auto it: xline[v.y]){
+                if(it == v.x)continue;
+                //cout<<it<< "  "<<v.y<<endl;
+                q.push({it, v.y, v.t +1, vert});
+            }
+        }
+    }
+}
+int main()
+{
+    freopen("lasers.in", "r", stdin);
+    freopen("lasers.out", "w", stdout);
+    int n;
+    cin>>n;
+    cin>>start.x>>start.y;
+
+    cin>>fin.x>>fin.y;
+    xline[fin.y].pb(fin.x);
+    yline[fin.x].pb(fin.y);
+    loop(i,1,n){
+       int x,y;
+       cin>>x>>y;
+       xline[y].pb(x);
+       yline[x].pb(y);
+       pt[{x,y}] = i;
+    }
+    bfs(start.x, start.y);
+    //or(auto it: xline[2]) cout<<it<< " " ;
+    //cout<<endl;
+    cout<<-1<<endl;
+    return 0;
+}
