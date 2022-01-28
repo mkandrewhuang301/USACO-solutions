@@ -4,84 +4,65 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 1001
-#define INF 10000000000000
+#define MAXN 1002
+#define INF 2e9  + 5
 #define mod 1000000007
-#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
-#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
-lli n, m;
-int sq(int a)
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+    dp[n][m] = which move bessie is on and which move fj is on
+    transition: dp[n][m+1] or dp[n+1]m
+    print(dp[n][m])
+*/
+lli dp[MAXN][MAXN];
+struct coord
 {
-    return a*a;
-}
-int distance(int af, int as, int bf, int bs)
+    lli x,y;
+};
+lli dist(coord a, coord b)
 {
-    return sq(af - bf) + sq(as - bs);
+    return (a.x - b.x)* (a.x  - b.x) + (a.y - b.y)* (a.y - b.y);
 }
-void update(pair<int,int>& move, char dm)
+int main()
 {
-    move.f = 0;
-    move.s = 0;
-    if (dm=='N') move.s = 1;
-    else if(dm =='S') move.s = -1;
-    else if (dm == 'W') move.f = -1;
-    else if(dm == 'E') move.f = 1;
-}
-int main() {
-    freopen("radio.in","r",stdin);
-    freopen("radio.out","w",stdout);
-    ///Input starting points
+    freopen("radio.in","r", stdin);
+    freopen("radio.out","w", stdout);
+    lli n, m;
     cin>>n>>m;
-    char john[MAXN],bessie[MAXN];
-    ///use pair for start x and y
-    pair<int, int> ijohn;
-    pair<int,int> ibes;
-    cin>>ijohn.f>>ijohn.s;
-    cin>>ibes.f>>ibes.s;
-    string x;
-    cin>>x;
-    lp(i,n) john[i] = x[i];
-    cin>>x;
-    lp(i,m) bessie[i] = x[i];
-    ///ahve a dp for best moves and the location of each best move at the ith and jth mvoe of bessie and fj
-    vector<vector<lli>> dp(n+1, vector<lli> (m+1, INF));
-    vector<vector<pair<pair<int,int>,pair<int,int>> >> pt(n+1, vector<pair<pair<int,int>,pair<int,int>>> (m+1)); /// first john second bes
-    pt[0][0] = {ijohn, ibes};
+    coord fj[MAXN];
+    cin>>fj[0].x>>fj[0].y;
+    coord bessie[MAXN];
+    cin>>bessie[0].x>>bessie[0].y;
+    string s;
+    cin>>s;
+    lp(i,s.length()){
+       fj[i+1] = fj[i];
+       if(s[i] == 'N')fj[i+1].y++;
+       if(s[i] == 'S')fj[i+1].y--;
+       if(s[i] == 'E')fj[i+1].x++;
+       if(s[i] == 'W')fj[i+1].x--;
+    }
+    cin>>s;
+    lp(i,s.length()){
+       bessie[i+1] = bessie[i];
+       if(s[i] == 'N')bessie[i+1].y++;
+       if(s[i] == 'S')bessie[i+1].y--;
+       if(s[i] == 'E')bessie[i+1].x++;
+       if(s[i] == 'W')bessie[i+1].x--;
+    }
+    memset(dp, 0x3f, sizeof(dp));
     dp[0][0] = 0;
-    ///loop all possible i and j . 
-    ///Doesnt really matter which, since you could do dp[i+1][j] by moving 1 up or dp[i-1] by checking the previous or updating the new
-    
-    lp(i, n){
-        lp(j, m){
-            ///Having a empty move and updating the x and y location  given the character
-            ///The three cases 
-            pair<int,int> bmove;
-            char dm = (char)bessie[j];
-            update(bmove, dm);
-            ///Bessie moves
-            if(dp[i][j]  + distance(pt[i][j].f.f, pt[i][j].f.s, pt[i][j].s.f + bmove.f, pt[i][j].s.s + bmove.s) < dp[i][j+1]){
-                dp[i][j+1] = dp[i][j] +distance(pt[i][j].f.f, pt[i][j].f.s, pt[i][j].s.f + bmove.f, pt[i][j].s.s + bmove.s);
-                //cout<<"AAA"<<endl;
-                pt[i][j+1] = {pt[i][j].f, {pt[i][j].s.f + bmove.f, pt[i][j].s.s  +bmove.s}};
-            }
-            pair<int,int> jmove;
-            char dj = john[i];
-            update(jmove, dj);
-            ///John moves
-            if(dp[i][j] + distance(pt[i][j].f.f  +jmove.f, pt[i][j].f.s  +jmove.s, pt[i][j].s.f , pt[i][j].s.s ) <dp[i+1][j]){
-                dp[i+1][j] = dp[i][j] + distance(pt[i][j].f.f  +jmove.f, pt[i][j].f.s  +jmove.s, pt[i][j].s.f , pt[i][j].s.s );
-                pt[i+1][j]=  {{pt[i][j].f.f + jmove.f, pt[i][j].f.s  +jmove.s}, pt[i][j].s};
-            }
-            ///Both move
-            if(dp[i][j]  + distance(pt[i][j].f.f  +jmove.f, pt[i][j].f.s  +jmove.s, pt[i][j].s.f  +bmove.f , pt[i][j].s.s + bmove.s)< dp[i+1][j+1]){
-                dp[i+1][j+1] = dp[i][j]  + distance(pt[i][j].f.f  +jmove.f, pt[i][j].f.s  +jmove.s, pt[i][j].s.f  +bmove.f , pt[i][j].s.s + bmove.s);
-                pt[i+1][j+1] = {{pt[i][j].f.f + jmove.f, pt[i][j].f.s  +jmove.s}, {pt[i][j].s.f + bmove.f, pt[i][j].s.s  +bmove.s}};
-            }
+    //transition: dp[n][m+1] or dp[n+1]m
+    for(int i = 0; i <n; i++){
+        for(int j = 0; j<m;j++){
+            dp[i][j+1] = min(dp[i][j+1], dp[i][j] + dist(fj[i], bessie[j+1]));
+            dp[i+1][j] = min(dp[i+1][j], dp[i][j] + dist(fj[i+1], bessie[j]));
+            dp[i+1][j+1] = min(dp[i+1][j+1], dp[i][j] + dist(fj[i+1], bessie[j+1]));
         }
     }
-
-    cout<<dp[n][m];;
-
-
-
+    cout<<dp[n][m]<<endl;
 }
