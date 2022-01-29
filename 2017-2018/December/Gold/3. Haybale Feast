@@ -16,6 +16,7 @@ typedef vector<lli> vi;
 /*
    find subarray range that works
    add seg tree for fun
+   if values are static, (unlike something like slimes in Atcoder DP), then that means it is good to use two pointers
 
 */
 #define flavor first
