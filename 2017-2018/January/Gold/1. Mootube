@@ -4,73 +4,87 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 21
-#define MAXVAL 1000000001
-#define INF 1000000000
+#define MAXN 100005
+#define INF 2000000005
 #define mod 1000000007
-#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
-#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
-#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>=
-int n, k;
-bool cmp( pair<int, pair<int,int>> a, pair<int,pair<int,int>> b)
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+   fThe idea is to make union find with the points. You need to sort queries by largest values first and then connect all values that have larger relevancies
+   as you go down ,the tree still persists
+   for these problems, you want to take note of 
+      1. If the tree is the if you increase or decrease the values 
+*/
+lli n, m;
+lli link[MAXN], sz[MAXN];
+struct query
 {
-    return a.f  > b.f;
-}
-struct unionfind{
-    vector<int>e;
-    void init(int n) { e = vector<int> (n, -1);}
-    int get(int x) { return e[x]<0 ? x:e[x] = get(e[x]);}
-    bool sameset(int x, int y) {return get(x) == get(y);}
-    int size(int x) {return -e[get(x)];}
-    bool combine (int x, int y){
-        x = get(x), y = get(y);
-        if(x==y) return false;
-        if(e[x] > e[y]) swap(x,y);
-        ///trick below allows us to have 1 array for dsu
-        ///each connected node is positive, which points to its parent
-        ///the final parent of a node contains the size, where we keep as negative for organization
-        e[x] += e[y];
-        e[y] = x;
-        return true;
-    }
+    lli relevance, node, ord;
 };
-int main() {
-    freopen("mootube.in","r",stdin);
-    freopen("mootube.out","w",stdout);
-    vector<pair<int,pair<int,int>>> adj;
-    vector<pair<int, pair<int,int>>> query;
-    cin>>n>>k;
+set<pair<int,pair<int,int>>> edge;
+void initialize()
+{
+    lp(i,n)
+    {
+        link[i] = i;
+        sz[i] = 1;
+    }
+}
+bool cmp(query a,query b)
+{
+
+    return a.relevance > b.relevance;
+}
+//UF algo
+lli find(lli x)
+{
+    while(link[x] != x) x=  link[x];
+    return x;
+}
+void join(lli a, lli b)
+{
+    lli x = find(a), y = find(b);
+    if(sz[x]  > sz[y]) swap(x,y);
+    link[x] = y;
+    sz[y] += sz[x];
+}
+int main()
+{
+    freopen("mootube.in","r", stdin);
+    freopen("mootube.out","w", stdout);
+    cin>>n>>m;
     lp(i,n-1){
-        int p,q,r;
-        cin>>p>>q>>r;
-        p--, q--;
-        adj.pb({r, {p,q}});
+       lli a,b, w;
+       cin>>a>>b>> w;
+       a--, b--;
+       edge.insert({w,{a,b}});
     }
-    lp(i, k){
-        int k ,v;
-        cin>>k>>v;
+    lli ans[MAXN];
+    vector<query> q;
+    lp(i ,m)
+    {
+       lli k,v;
+       cin>>k>>v;
         v--;
-        query.pb({k, {v, i}});
+       q.pb({k, v, i});
     }
-    vector<int> ans(k);
-    sort(adj.begin(), adj.end(), cmp);
-    sort(query.begin(), query.end(), cmp);
-    unionfind d;
-    d.init(n);
-    int idx  =0;
-    for(auto q:query){
-        int v = q.s.f;
-        int ck = q.f;
-        while(idx< adj.size() && adj[idx].f>=ck){
-            d.combine(adj[idx].s.f, adj[idx].s.s);
-            idx++;
+    ///get largest relevance needed first
+    sort(q.begin() ,q.end(), cmp);
+    initialize();
+    for(auto it: q)
+    {
+        auto cur = edge.lower_bound({it.relevance, {-1, -1}});
+        while(cur != edge.end()){
+            if(find(cur->s.f) != find(cur->s.s)) {
+                    join(cur->s.f, cur->s.s);
+            }
+            cur = edge.erase(cur);
         }
-        ans[q.s.s] = d.size(v) - 1;
+        ans[it.ord] = sz[find(it.node)] -1;
     }
-    for(auto x:ans){
-        cout<<x<<endl;
-    }
+    lp(i,m) cout<<ans[i]<<endl;;
 }
