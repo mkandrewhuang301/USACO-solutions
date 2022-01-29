@@ -4,56 +4,71 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 100001
-#define INF 10000000000000
+#define MAXN 100005
+#define INF 2000000005
 #define mod 1000000007
-#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
-#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
-lli n, m;
-struct stuff{
-    int spice, left, right;lli flavor;
-};
-multiset<pair<int,int>> pt;
-stuff a[MAXN];
-int lupdate(int pos, lli &fsum)
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+   find subarray range that works
+   add seg tree for fun
+
+*/
+#define flavor first
+#define spicy second
+pair<lli,lli> seg_tree[1<<19];
+void upd(lli k ,lli flav, lli spic)
 {
-    int orig = pos;
-    while(pos - 1 >=0 && a[pos - 1].spice <= a[orig].spice ){ ///add case when they hit a "block"
-        pos--;
-        fsum+= a[pos].flavor;
-        pos = a[pos].left;
+    k+= (1<<18);
+    seg_tree[k] = {flav, spic};
+    while(k>1){
+        k/=2;
+        seg_tree[k].flavor = seg_tree[2*k].flavor + seg_tree[2*k  +1].flavor;
+        seg_tree[k].spicy = max(seg_tree[2*k].spicy, seg_tree[2*k+1].spicy);
     }
-    return pos;
 }
-int rupdate(int pos, lli &fsum)
+pair<lli,lli> qry(lli lo, lli hi)
 {
-    int orig = pos;
-    while(pos +1 < n && a[pos+1].spice <= a[orig].spice){
-        pos++;
-        fsum+= a[pos].flavor;
-        pos = a[pos].right;
-    }
-    return pos;
-}
-int main() {
-    freopen("hayfeast.in","r",stdin);
-    freopen("hayfeast.out","w",stdout);
-    cin>>n>>m;
-    for(int i = 0;i<n;i++){
-        int s, f;
-        cin>>f>>s;
-        pt.insert({s, i});
-        a[i] = {s, i, i, f};
-    }
-    for(auto it: pt){
-        int loc = it.s;
-        lli fsum = a[loc].flavor; ///be careful not to add twice in middle
-        int mxleft=lupdate(loc, fsum);
-        int mxright = rupdate(loc, fsum);
-        a[mxright] = a[mxleft] = {it.f, mxleft, mxright, fsum};
-        if(fsum>= m){
-            cout<<it.f;
-            return 0;
+    lo += (1<<18), hi += (1<<18);
+    pair<lli,lli> ans = {0,0};;
+    while(lo<=hi){
+        if(lo&1) {
+            ans.spicy = max(ans.spicy, seg_tree[lo].spicy);
+            ans.flavor += seg_tree[lo].flavor;
+            lo++;
         }
+        if(~hi&1){
+            ans.spicy = max(ans.spicy, seg_tree[hi].spicy);
+            ans.flavor += seg_tree[hi].flavor;
+            hi--;
+        }
+        lo/=2, hi/=2;
     }
+    return ans;
 }
+int main()
+{
+    freopen("hayfeast.in","r", stdin);
+    freopen("hayfeast.out","w", stdout);
+    lli n,m;
+    cin>>n>>m;
+    lp(i,n){
+        lli fla, spi;
+        cin>>fla>>spi;
+        upd(i ,fla, spi);
+    }
+    lli right  = 0, left = 0;
+    lli ans = INF;
+    while( left<n && right<  n){
+        while(qry(left, right).flavor < m && right +1 < n) right++;
+        if(qry(left, right).flavor >=m)ans = min(ans, qry(left, right).spicy);
+        left++;
+    }
+    cout<<ans<<endl;
+
+}
+
