@@ -4,41 +4,61 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 100001
-#define MAXVAL 1000000001
-#define INF 1000000000
+#define MAXN 100005
+#define INF 2000000005
 #define mod 1000000007
-#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
-#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+    get heights of left and right and then compare
+    three ways to get all values greater than a value preceeding 
+       a. use bBIT and then find the values   +coordinate compression
+       b. segment tree + coordinate compressino
+       c. ordered set
+    In this code I used ordered set
+*/
+
+///find distance from value to root
+int n;
+vector<int> cow;
+int rht[MAXN], lft[MAXN];
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+
 #define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
-int n, k;
-ordered_set cow;
-ordered_set woc;
-vector<int> height;
-int main() {
-    freopen("bphoto.in","r",stdin);
-    freopen("bphoto.out","w",stdout);
+int main()
+{
+    freopen("bphoto.in", "r", stdin);
+    freopen("bphoto.out","w", stdout);
+
     cin>>n;
     lp(i,n){
-        int x;
-        cin>>x;
-        cow.insert(x);
-        height.pb(x);
+       int x;
+       cin>>x;
+       cow.pb(x);
     }
-    int ans = 0;
-    for(auto it:height)
-    {
-        cow.erase(it); ///since no duplicates, can just erase that value
-        ///Right side gives number of values smaller, so n - smaller num = total number larger
-        int r = cow.size() - cow.order_of_key(it);
-        ///same goes for this, although we are just making it backwards, 
-        int l = woc.size() - woc.order_of_key(it);
-        woc.insert(it);
-        if(max(l, r)  >2* min(l, r)) ans++; ///this part is very cool , condenses the finding left or right
+    ///get all values that are taller from the left
+    ordered_set oset;
+    lp(i,n){
+       lft[i] = oset.size() - oset.order_of_key(cow[i]);
+       oset.insert(cow[i]);
+    }
+    oset.clear();
+    ///taller from righht
+    for(int i = n-1; i>=0; i--){
+       rht[i] = oset.size() - oset.order_of_key(cow[i]);
+       oset.insert(cow[i]);
+    }
+    int ans = 0 ;
+    lp(i,n){
+       int s  = lft[i], l = rht[i];
+       if(s > l) swap(s, l);
+       if(s*2 < l)ans++;
     }
     cout<<ans<<endl;
 }
-
