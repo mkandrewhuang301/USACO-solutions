@@ -4,7 +4,7 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 100005
+#define MAXN 100007
 #define INF 2000000005
 #define mod 1000000007
 #define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
@@ -23,7 +23,7 @@ typedef vector<lli> vi;
     paper beat hoof
 */
 int a[MAXN];
-int dp[MAXN][21][4];
+int dp[MAXN][22][4];
 #define hoof 0
 #define paper 1
 #define scissor 2
@@ -38,9 +38,9 @@ int outcome(int bes, int fj)
 }
 int main()
 {
-    freopen("D://4.in","r", stdin);
-    //freopen("hps.in","r", stdin);
-    //freopen("hps.out","w", stdout);
+    //freopen("D://4.in","r", stdin);
+    freopen("hps.in","r", stdin);
+    freopen("hps.out","w", stdout);
     int n,k;
     cin>>n>>k;
     loop(i,1,n){
@@ -53,13 +53,12 @@ int main()
     memset(dp, 0, sizeof dp);
     for(int i = 1; i<=n; i++){
         for(int nswap = 1; nswap <=k+1; nswap++){
-            int res  = outcome(hoof, a[i]);
-            dp[i][nswap][hoof] = max(dp[i-1][nswap][hoof] + res, max(dp[i-1][nswap-1][scissor] + res,dp[i-1][nswap-1][paper] + res));
-            res  = outcome(paper, a[i]);
-            dp[i][nswap][paper] = max(dp[i-1][nswap][paper] + res, max(dp[i-1][nswap-1][scissor] + res,dp[i-1][nswap-1][hoof] + res));
-            res  = outcome(scissor, a[i]);
-            dp[i][nswap][scissor] = max(dp[i-1][nswap][scissor] + res, max(dp[i-1][nswap-1][hoof] + res,dp[i-1][nswap-1][paper] + res));
-
+            for(int cur = 0; cur < 3; cur++){
+                ///change
+                dp[i][nswap][cur] = dp[i-1][nswap][cur]  + outcome(cur, a[i]);
+                dp[i][nswap][cur] = max(dp[i][nswap][cur], dp[i-1][nswap -1][(cur+1)%3] + outcome(cur, a[i]));
+                dp[i][nswap][cur] = max(dp[i][nswap][cur], dp[i-1][nswap -1][(cur+2)%3] + outcome(cur, a[i]));
+            }
         }
     }
     int ans = 0;
@@ -70,6 +69,4 @@ int main()
           ans = max(ans, dp[n][nswap][scissor]);
     }
     cout<<ans<<endl;
-
-
 }
