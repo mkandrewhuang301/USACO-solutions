@@ -4,85 +4,80 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 100001
-#define MAXVAL 1000000001
-#define INF 10000000000000
+#define MAXN 200005
+#define INF 2000000005
 #define mod 1000000007
-#define loop(i, a,b) for  (int i=(a); i<= (signed)(b); i++)
-#define lp(i,a) for(int i = 0;i<(signed)(a); i++)
-int n, k,  parent[MAXN], vis[MAXN];
-vector<int> depth(MAXN, -1);
-vector<int> adj[MAXN];
-vector<int> leaf;
-int len = 1, ans = 0;
-set<int> ocount;
-///construct a tree with depth ,and the parent for each node
-void construct(int root)
-{
-    queue<int> q;
-    q.push(root);
-    depth[root]  =0;
-    parent[root] = -1;
-    while(!q.empty()){
-        int v = q.front();
-        q.pop();
-        if(adj[v].size() ==1) leaf.pb(v);
-        for(auto it: adj[v]){
-            if(depth[it] != -1)continue;
-            depth[it] = depth[v]  +1;
-            parent[it] = v;
-            q.push(it);
-        }
-    }
-}
-bool cmp (int a, int b)
-{
-    return depth[a] < depth[b];
-}
-///doing a dfs fill. if value already seen before, add to a set for later subtraction for overcounting
-void fill(int v, int i)
-{
-    for(auto it: adj[v]){
-        if(it == parent[v])continue;
-        if(vis[it] != i && vis[it] != 0) ocount.insert(vis[it]);
-        vis[it] = i;
-        fill(it, i);
-    }
-}
-int main() {
-    freopen("atlarge.in","r", stdin);
-    freop("atlarge.out","w",stdout);
-    cin>>n>>k;
-    for(int i = 0;i<n -1;i++){
-        int a,b;
-        cin>>a>>b;
-        adj[a].pb(b);
-        adj[b].pb(a);
-    }
-    ///create grid
-    construct(k);
-    ///sort by smallest to deepest, since usually deepest is the one that is covered
-    sort(leaf.begin() ,leaf.end(), cmp);
-    for(auto v: leaf){
-        if(vis[v])continue;
-        int ndepth = depth[v];
-        while(true){
-            int nxt = parent[v];
-            ///if bessie reaches first, have that farmer fill for all nodes that he reached (that bessie cannot reach)
-            if( depth[nxt] < ndepth - depth[nxt]){
-                ans++;
-                fill( v, len++);
-                ///ans subtract the number of ones that a farmer already did
-                ans-= ocount.size();
-                ocount.clear();
-                break;
-            }
-            v = nxt;
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+   observations: if bessie can reach a node before a farmer can from leaf, then she is "safe"
+   bessie needs to go away from root, farmers move from leaf to node
+   so, find all values where there is an "switch"
+      find all values where closer to leaf than node, but for its parent, closer to the root than the leaf
+   so find dist of each from root and dist from each to leaf
+      first can be done by simple DFS
+      second can be done by bfs
 
+*/
+vi adj[MAXN];
+int rootdist[MAXN];
+int leafdist[MAXN];
+int vis[MAXN];
+int ans = 0 ;
+///find distance from value to root
+void dfs(int v, int p, int t)
+{
+    rootdist[v] = t;
+    for(auto c: adj[v]){
+        if (c == p) continue;
+        dfs(c, v, t+1);
+    }
+}
+///dfs to find the number of values that have that swap
+void dfs2(int v, int p)
+{
+    if(leafdist[v] <= rootdist[v] && leafdist[p] > rootdist[p] )ans++;
+    for(auto c: adj[v]){
+        if(c == p )continue;
+        dfs2(c, v);
+    }
+}
+int main()
+{
+    freopen("atlarge.in","r", stdin);
+    freopen("atlarge.out","w", stdout);
+    int n,k;
+    cin>>n>>k;
+    k--;
+    lp(i,n-1){
+       int a,b;
+       cin>>a>>b;
+       a--, b--;
+       adj[a].pb(b);
+       adj[b].pb(a);
+    }
+    dfs(k, k, 0);
+    queue<pair<int,int>> q;
+    lp(i,n){
+      if(adj[i].size() ==1) q.push({i, 0});
+    }
+    ///find distance from leafs
+    while(!q.empty()){
+        auto v = q.front(); q.pop();
+        if(vis[v.f]) continue;
+        vis[v.f] = true;
+        leafdist[v.f] = v.s;
+        for(auto c: adj[v.f]){
+            q.push({c, v.s + 1});
         }
     }
+    dfs2(k, k);
     cout<<ans<<endl;
 
 
-}
 
+}
