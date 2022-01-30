@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 200005
+#define INF 2000000005
+#define mod 1000000007
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+    given any arbitray palliing you can start from left to right and palli each ith element color. Then reverse until you get to i, k+i
+    so, it is just a matter of finding the number of paintings that have at least 1 [1, k+1] region continious
+    easier to solve complementary
+    number of unrestricted = n^m
+    bad palliings  = number of palliings that do not have 1 coloring
+       - 1. if less than k it is just n^i
+       - 2. if >= k then it is (m-1) * all segments of possible
+               - we do (m-1) because there is m-1 colors to palli the last 1 to k-1 segments to be different frmo the other color
+*/
+
+///find distance from value to root
+    lli dp[MAXN];
+lli base[MAXN];
+int main()
+{
+    freopen("spainting.in", "r", stdin);
+    freopen("spainting.out","w", stdout);
+    lli n,m,k;
+    cin>>n>>m>>k;
+    memset(dp, 0 ,sizeof dp);
+    dp[0] = 1;
+    for(lli i  =1; i<k; i++){
+        dp[i] = (dp[i-1] *m)%mod;
+    }
+    for(lli i = k ;  i <=n;i++){
+        for(lli len = 1; len <= k-1; len++){
+            if(i -  len  <0) break;
+            dp[i] = (dp[i] + dp[i-len])%mod;
+        }
+        dp[i]  = (dp[i] *(m-1))%mod;
+    }
+
+    memset(base, 0, sizeof base);
+    base[0]  =1;
+    loop(i,1, n){
+        base[i] = (base[i-1] * m)%mod;
+    }
+    lli ans = base[n] - dp[n];
+    if(ans < 0) ans+= mod;
+    cout<<ans<<endl;
+}
