@@ -4,46 +4,50 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 100001
-#define hoof 0
-#define paper 1
-#define scissor 2
-lli n, m,c;
-vector<int> edge[MAXN];
+#define MAXN 1001
+#define INF 2000000005
+#define mod 1000000007
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+    suppose you get most money, then function is 1000t - t^2. so t is bounded by 1000
+    Now we can just find the the best sum of ecah location at time t by looping and then find best time to be at 0 through all the times
+    times complexity( 1000* N*M)
+*/
+lli money[MAXN];
+vector<lli> adj[MAXN];
+lli dp[MAXN][MAXN]; ///amoutn of money made at time t
+
 int main() {
-    freopen("time.in","r",stdin);
-    freopen("time.out","w",stdout);
+    freopen("time.in","r", stdin);
+    freopen("time.out","w", stdout);
+    lli n, m ,c;
     cin>>n>>m>>c;
-    int a[1001];
-    for(int i  =0;i<n;i++){
-        cin>>a[i];
+    lp(i,n){
+       cin>>money[i];
     }
-    int f, s;
-    for(int i  =0;i<m;i++){
-        cin>>f>>s;
-        f--;
-        s--;
-        edge[f].push_back(s);
+    lp(i,m){
+      lli a,b;
+      cin>>a>>b;
+      a--, b--;
+      adj[b].pb(a);
     }
-    lli best  =0;
-    vector<vector<lli>> dp(1001, vector<lli>(n+1, -1000000));
+    memset(dp, -1000005, sizeof dp );
     dp[0][0] = 0;
-    for(int t  =1; t<=1000;t++){
-        for(int v  =0;v<n;v++){
-            for(auto orig: edge[v]){
-                if(dp[t-1][orig]<0)continue;
-                dp[t][v] = max(dp[t][v], dp[t-1][orig]  +a[v]);
+
+    for(int t = 1; t<1001; t++){
+        for(int v = 0 ; v<n;v++){
+            for(auto p: adj[v]){
+                dp[t][v] = max(dp[t][v], dp[t-1][p]  +money[v]);
             }
         }
     }
-    lli ans  =0;
-    for(int i  =0;i<=1000; i++){
-        ans = max(ans, dp[i][0] - c*i*i);
-    }
+    lli ans =0  ;
+    loop(i,0,  1000)ans = max(ans, dp[i][0] - c*i*i);
     cout<<ans<<endl;
-
-
-
-
 
 }
