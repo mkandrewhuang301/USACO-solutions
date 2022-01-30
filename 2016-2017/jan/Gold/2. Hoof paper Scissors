@@ -4,49 +4,72 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define MAXN 100001
+#define MAXN 100005
+#define INF 2000000005
+#define mod 1000000007
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rev(a) reverse(a.begin(), a.end())
+#define debug cout<<"I am here"<<endl;
+#define rep(n) for(lli i = 0; i< n; i++)
+typedef vector<lli> vi;
+/*
+    dp problem.
+    do[n][k][j] = best number of wins if you have nth order and kth swapps with last swap being a k
+    ans  = sum of all best dp[n][i];
+    transition: no change, change to another change to third
+    hoof beat scissor
+    scissor beat paper
+    paper beat hoof
+*/
+int a[MAXN];
+int dp[MAXN][21][4];
 #define hoof 0
 #define paper 1
 #define scissor 2
-lli n, k;
-vector<int> a (MAXN);
-int check(int f, int s)
+int outcome(int bes, int fj)
 {
-    if(f == hoof && a[s] == scissor) return 1;
-    if(f== paper && a[s] == hoof) return 1;
-    if(f == scissor && a[s]  == paper) return 1;
+    ///these are win conditions
+    if (bes == hoof && fj == scissor) return 1;
+    if(bes == scissor && fj == paper) return 1;
+    if(bes == paper && fj == hoof) return 1;
+    ///lose or tie
     return 0;
 }
-int main() {
-    freopen("hps.in", "r", stdin);
-    freopen("hps.out","w",stdout);
+int main()
+{
+    freopen("D://4.in","r", stdin);
+    //freopen("hps.in","r", stdin);
+    //freopen("hps.out","w", stdout);
+    int n,k;
     cin>>n>>k;
-    for(int i = 1;i<=n;i++){
-        char x;
-        cin>>x;
-        if(x == 'H') a[i] = hoof;
-        else if(x == 'P') a[i] = paper;
-        else if(x == 'S') a[i] = scissor;
+    loop(i,1,n){
+       char x;
+       cin>>x;
+       if(x == 'P') a[i] = paper;
+       if(x == 'S') a[i] = scissor;
+       if(x == 'H') a[i] = hoof;
     }
-    int ans = 0;
-    vector<vector<vector<int>>> dp (n+1, vector<vector<int>> (k+2, vector<int> (3, 0) ));
-    for(int i  = 1; i<=n; i++){
-        for(int j  =1;j<=k+1;j++){   ///k+1 since there is k swaps in between 1 and k+1
-            int add = check(hoof, i);
-            dp[i][j][hoof] = max(dp[i-1][j][hoof]  +add, max(dp[i-1][j-1][paper] + add, dp[i-1][j-1][scissor]  +add));
+    memset(dp, 0, sizeof dp);
+    for(int i = 1; i<=n; i++){
+        for(int nswap = 1; nswap <=k+1; nswap++){
+            int res  = outcome(hoof, a[i]);
+            dp[i][nswap][hoof] = max(dp[i-1][nswap][hoof] + res, max(dp[i-1][nswap-1][scissor] + res,dp[i-1][nswap-1][paper] + res));
+            res  = outcome(paper, a[i]);
+            dp[i][nswap][paper] = max(dp[i-1][nswap][paper] + res, max(dp[i-1][nswap-1][scissor] + res,dp[i-1][nswap-1][hoof] + res));
+            res  = outcome(scissor, a[i]);
+            dp[i][nswap][scissor] = max(dp[i-1][nswap][scissor] + res, max(dp[i-1][nswap-1][hoof] + res,dp[i-1][nswap-1][paper] + res));
 
-            add = check(paper, i);
-            dp[i][j][paper] = max(dp[i-1][j][paper] + add, max(dp[i-1][j-1][hoof]  +add, dp[i-1][j-1][scissor]  +add));
-
-            add = check(scissor, i);
-            dp[i][j][scissor] = max(dp[i-1][j][scissor]  +add, max(dp[i-1][j-1][hoof] + add, dp[i-1][j-1][paper]  +add));
-            if(i == n){
-                ans = max(ans, dp[i][j][hoof]);
-                ans = max(ans, dp[i][j][scissor]);
-                ans = max(ans, dp[i][j][paper]);
-            }
         }
     }
+    int ans = 0;
+    loop(nswap,1, k+1){
+          //cout<<nswap<< " " <<cur<< "  "<<dp[n][nswap][cur]<<endl;
+          ans = max(ans, dp[n][nswap][hoof]);
+          ans = max(ans, dp[n][nswap][paper]);
+          ans = max(ans, dp[n][nswap][scissor]);
+    }
     cout<<ans<<endl;
+
 
 }
