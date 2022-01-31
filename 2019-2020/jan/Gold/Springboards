@@ -1,0 +1,12 @@
+Note that for given i in the start of a springboard, and j for all previous springboards that is less for x and y, the distance of springboard i start is min(x +  y, min_dist_to[j]  - xjstart - yjstart + x +y)
+so we need to find springboard  (or begining) that causes a minimum
+Usually, when you want a smaller x and smaller y, you sort by x and then find all smaller y values
+
+There are two cases for each springboard:
+ 1. if end, you want to insert  (ans[j] - xendj - yendj )becaues this is constant for all values above it
+      find value 1 less than the upper bound (this can be done with prev). if there is a springboard lower y than it and lower value, no reason to use springboard. Dont change mp
+      If y value above it is less than current, remove becaues no reason to use above springboard. Keep on doing until no more or 1 higher y value with lower ans
+      Results in a map of springboards that have springboard values that decrease as you increas y
+ 2. If beginning value, you wan to find springboard end point that is less or equal to y. Note that larger y causes smaller value so makes the distance to the stnart of i smalelr
+ 
+ At n, pring largest springboard y value  + 2n . (2n is negated by the x and y value of the last springboard )
