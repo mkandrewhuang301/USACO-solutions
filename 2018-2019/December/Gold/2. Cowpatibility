@@ -13,6 +13,13 @@ using namespace std;
 typedef vector<int> vi;
 typedef pair<int,int> pii;
 typedef vector<pair<int,int>> vpii;
+/*
+   use complementary counting of number of toatal - number compatible
+   use principle of PIE.
+   each set of favorite candy is size 5, and so total of 31 subsets per cow
+   have a map of subsets and see how many cows have the same ubset (obviously sorting). Generate subset by bitset. 
+   then based on number of elements in subset ,determine whether it is plus or minus and multiply num pairs by nc2/
+*/
 int n,m, k;
 int a[MAXN];
 vi flavor[1000001];
