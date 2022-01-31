@@ -12,6 +12,14 @@ using namespace std;
 typedef vector<int> vi;
 typedef pair<int,int> pii;
 typedef vector<pair<int,int>> vpii;
+/*
+    observe that you can get original distance by running a dijkstras from N to all distances
+    if orign dijstras >= new dijkstras, then output 1
+    we need a second dijkstras. Note that candy is a negatvie weight where n is candy. We need to amke sure that each candy route is only used once
+    Clean way is to make another point, and link it to all haybale regions  by origdist[haybaleregion]  - haybale yumminess.
+    Then compare 
+
+*/
 int n,m, k;
 vpii adj[MAXN];
 vector<int> dist(MAXN, INF );
