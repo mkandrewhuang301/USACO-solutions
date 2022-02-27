@@ -1,0 +1,119 @@
+treat thing in reverse
+1. Get all roads that stay forever
+2. Get all locations that are never deactivated
+3. loop through all intiial and use DFS to get all values and set it to the same time
+4. Get queries in reverse
+   if remove - add edge
+   if deactivate - activate 
+   if add edge , ignore you know both sides are active, and will always stay active
+ If there are values that are active, then dfs the whole component and set it to active and output answer
+ ///Code is not really working because DFS is not always the best
+ #include <bits/stdc++.h>
+using namespace std;
+#define lli long long int
+#define f first
+#define s second
+#define pb push_back
+#define MAXN 200005
+#define INF 2000000005
+#define mod 1000000007
+#define loop(i,a,b) for  (lli i=(a); i<= (signed)(b); i++)
+#define lp(i,a) for(lli i = 0;i<(signed)(a); i++)
+#define rep(n) for(lli i = 0; i< n; i++)
+#define debug cout<<"I am here"<<endl;
+typedef vector<lli> vi;
+typedef vector<vector<lli>> vvi;
+/*
+    since going forward is very clunky becaues you dont know which as actiated and which is deactivated, lets work backwrads
+    first get all values that have activated at the very end
+    deactivate = activate
+    remove = build
+    This way, you are guarenteed a segment , if on, will always be on
+    get the max time it is turned on
+    Optimization: how to efficiently update all times if you connect two segments?
+        - know that each segment is either activated or inactivated
+        - So, it is a good idea to get set, so that whenever you join, all are connected
+        - make sure to only use it when all unconnected
+
+*/
+
+int state[MAXN];
+vector<pair<int,int>> road;
+vector<pair<char, vector<int>>> query;
+vector<int> adj[MAXN];
+int ans[MAXN];
+map<int, pair<int,int>> foreverroad;
+void dfs(int v, int p, int t)
+{
+    cout<<v<<endl;
+    ans[v] = t;
+    for(auto c :adj[v]){
+        if(c == p) continue;
+        dfs(c, v, t);
+    }
+}
+int main() {
+  freopen("D://4.in","r", stdin);
+  int n, q;
+  cin>>n>>q;
+  //cout<<n<<q<<endl;
+  fill_n(state, MAXN, 1);
+  int ct = 0;
+  lp(i, q){
+      char c;
+      cin>>c;
+      if(c == 'D' ){
+        int x;
+        cin>>x;
+        state[x] = 0;
+        query.pb({c, {x}});
+      }
+      else if(c == 'A'){
+        int a,b;
+        cin>>a>>b;
+        road.pb({a,b});
+        query.pb({c, {a,b}});
+        foreverroad[ct++]  = {a,b};
+      }
+      else if(c == 'R'){
+        int r;
+        cin>>r;
+        r--;
+        query.pb({c, {r}});
+        foreverroad.erase(r);
+      }
+  }
+  for(auto it : foreverroad){
+    adj[it.s.f].pb(it.s.s);
+    adj[it.s.s].pb(it.s.f);
+  }
+  reverse(query.begin() ,query.end());
+  for(int i =1; i<=n;i++){
+    //cout<<i<<endl;
+    if(ans[i] == 0) dfs(i, i, q);
+  }
+  for(int i = 0 ; i< query.size(); i++){
+    if(query[i].f == 'A')continue;
+    if(query[i].f == 'R'){
+        int r = query[i].s[0];
+        int a = road[r].f;
+        int b = road[r].s;
+        int t = q - i - 1;
+        if(ans[b] == 0 && ans[a]!=0) dfs(b,b, t);
+        else if (ans[a] == 0 && ans[b] !=0) dfs(a,a,t);
+        adj[a].pb(b);
+        adj[b].pb(a);
+    }
+    if(query[i].f == 'D'){
+        int farm = query[i].s[0];
+        state[farm] = 1;
+        if(ans[farm] == 0){
+            dfs(farm, farm, q -  i  -1);
+        }
+    }
+  }
+  loop(i,1,n) cout<<ans[i]<<endl;
+
+
+
+}
